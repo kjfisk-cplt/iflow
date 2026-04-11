@@ -5,12 +5,23 @@
 		}
 	],
 	"settings": {
+		"chat.subagents.allowInvocationsFromSubagents": true,
 		"chat.tools.terminal.autoApprove": {
 			"az": true,
 			"aztfexport": true,
 			"terraform": true,
 			"New-Item": true,
-			"Out-Null": true
-		}
+			"Out-Null": true,
+			// Allow the `mkdir` command
+			"mkdir": true,
+			// Allow `git status` and commands starting with `git show`
+			"/^git (status|show\\b.*)$/": true,
+			// Block the `del` command
+			"del": false,
+		},
+		"github.copilot.chat.codeGeneration.useInstructionFiles": true,
+		"github.copilot.chat.backgroundAgent.enabled": true,
+		"github.copilot.chat.tools.memory.enabled": true,
+		"github.copilot.chat.copilotMemory.enabled": true,
 	}			
 }
