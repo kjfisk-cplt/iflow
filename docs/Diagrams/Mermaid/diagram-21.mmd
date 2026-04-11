@@ -1,0 +1,20 @@
+﻿flowchart LR
+    LA["Logic Apps"] -->|HTTP via APIM| TF["Tracking Function App"]
+    TF -->|messageflowtracking| Q1["SB Queue: messageflow"]
+    TF -->|messagecontenttracking| Q2["SB Queue: messagecontent"]
+    TF -->|keyvaluetracking| Q3["SB Queue: keyvalue"]
+    TF -->|freetexttracking| Q4["SB Queue: freetext"]
+    TF -->|errortracking| Q5["SB Queue: error"]
+    TF -->|filearchivetracking| Q6["SB Queue: filearchive"]
+
+    Q1 --> LF["Logger Function App"]
+    Q2 --> LF
+    Q3 --> LF
+    Q4 --> LF
+    Q5 --> LF
+    Q6 --> LF
+
+    EH["Event Hub: workflowruntimelogs"] --> LF
+    LF --> LAWS["Log Analytics (Tracking)"]
+    CF["Common Function App"] -->|Dead-letter/deferred API| SB["Service Bus topics/queues"]
+    CF -->|Nightly timer summary| LAWS

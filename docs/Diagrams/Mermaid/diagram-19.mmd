@@ -1,0 +1,39 @@
+﻿sequenceDiagram
+    autonumber
+    participant Ops as Operatör eller Logic App
+    participant APIM as APIM
+    participant CF as Common Function App
+    participant Q as Service Bus Queue DLQ
+    participant LA as Log Analytics
+
+    Ops->>APIM: POST GetQueueDeadLetterSummary queue?
+    APIM->>CF: HTTP trigger
+    CF->>Q: Läs dead-letter summary
+    Q-->>CF: DLQ counts
+    CF-->>Ops: 200 + summary
+
+    Ops->>APIM: POST GetQueueDeadLetterMessagesPeek queue maxCount?
+    APIM->>CF: HTTP trigger
+    CF->>Q: Peek flera DLQ-meddelanden
+    Q-->>CF: Lista meddelanden
+    CF-->>Ops: 200 + meddelanden
+
+    Ops->>APIM: POST GetQueueDeadLetterMessagePeek sequenceNumber
+    APIM->>CF: HTTP trigger
+    CF->>Q: Peek specifikt DLQ-meddelande
+    Q-->>CF: Meddelande
+    CF-->>Ops: 200
+
+    Ops->>APIM: POST GetQueueDeadLetterMessagePeekLock sequenceNumber
+    APIM->>CF: HTTP trigger
+    CF->>Q: PeekLock DLQ-meddelande
+    Q-->>CF: Låst meddelande
+    CF-->>Ops: 200
+
+    Ops->>APIM: POST CompleteQueueDeadLetterMessage sequenceNumber
+    APIM->>CF: HTTP trigger
+    CF->>Q: Complete låst DLQ-meddelande
+    Q-->>CF: Ack
+    CF-->>Ops: 200
+
+    Note over CF,LA: DeadLetterTimerTracker inkluderar även kö-baserad dead-letter summering i Log Analytics.

@@ -1,0 +1,42 @@
+﻿sequenceDiagram
+    autonumber
+    participant Ops as Operatör eller Logic App
+    participant APIM as APIM
+    participant CF as Common Function App
+    participant SB as Service Bus Topic Subscription
+    participant LA as Log Analytics
+
+    Ops->>APIM: POST GetTopicSubscriptionDeferredMessagesPeek
+    APIM->>CF: HTTP trigger
+    CF->>SB: Peek deferred messages
+    SB-->>CF: Lista deferred messages
+    CF-->>APIM: 200 + deferred lista
+    APIM-->>Ops: Deferred översikt
+
+    Ops->>APIM: POST GetTopicSubscriptionDeferredMessagePeek sequenceNumber
+    APIM->>CF: HTTP trigger
+    CF->>SB: Peek specifikt deferred message
+    SB-->>CF: Message eller MessageNotFound
+    CF-->>Ops: 200 eller MessageNotFound-status
+
+    alt Action Complete
+        Ops->>APIM: POST CompleteTopicDeferredMessage
+        APIM->>CF: HTTP trigger
+        CF->>SB: Complete deferred message
+        SB-->>CF: Ack
+        CF-->>Ops: 200
+    else Action Abandon
+        Ops->>APIM: POST AbandonTopicDeferredMessage
+        APIM->>CF: HTTP trigger
+        CF->>SB: Abandon deferred message
+        SB-->>CF: Ack
+        CF-->>Ops: 200
+    else Action DeadLetter
+        Ops->>APIM: POST DeadLetterTopicDeferredMessage reason
+        APIM->>CF: HTTP trigger
+        CF->>SB: Dead-letter deferred message
+        SB-->>CF: Ack
+        CF-->>Ops: 200
+    end
+
+    Note over CF,LA: DeadLetterTimerTracker kör dagligen 01:00 och skickar dead-letter-summering till Log Analytics.

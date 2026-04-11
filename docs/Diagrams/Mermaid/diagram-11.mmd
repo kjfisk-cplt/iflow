@@ -1,0 +1,23 @@
+﻿sequenceDiagram
+    autonumber
+    participant C as Klient
+    participant RCV as Workflow: Demo-Session-Convoy-Receiver
+    participant SB as Service Bus topic: Demo-Session-Convoy
+    participant HND as Workflow: Demo-Session-Convoy-Handler
+
+    loop Inkommande ordermeddelanden
+        C->>RCV: HTTP POST (customerId=X)
+        RCV->>SB: Send (sessionId=Session-X)
+    end
+
+    SB-->>HND: Session trigger (sessionId=Session-X)
+    HND->>SB: Complete trigger message
+
+    loop tills messagesReceived = 3 (max 1 timme)
+        HND->>SB: Get messages from session
+        HND->>SB: Complete meddelande
+        HND->>HND: Summera orderLines (totalAmount)
+        HND->>SB: Renew session lock
+    end
+
+    Note over HND: Affärslogik med alla 3 ordrar (totalAmount)

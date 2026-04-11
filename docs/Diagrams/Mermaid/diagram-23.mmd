@@ -1,0 +1,37 @@
+﻿%%{init: {
+  'theme': 'base',
+  'themeVariables': {
+    'fontSize': '18px',
+    'fontFamily': 'Segoe UI',
+    'primaryColor': '#F8FAFC',
+    'primaryBorderColor': '#334155',
+    'lineColor': '#334155'
+  },
+  'flowchart': {
+    'nodeSpacing': 55,
+    'rankSpacing': 70,
+    'curve': 'linear'
+  }
+}}%%
+flowchart LR
+    Start([Workflow start]) --> Try
+
+    Try["Try scope<br/>1. Initiera CorrelationId<br/>2. InitiatorTracker -> APIM<br/>3. Affarslogik<br/>4. Complete SB vid behov"]
+    Check{"Try utfall"}
+    Catch["Catch scope<br/>1. ErrorTracker -> APIM<br/>2. Terminate"]
+    Finally["Finally scope<br/>1. MessageTracker -> APIM"]
+    End([Workflow end])
+
+    Try --> Check
+    Check -->|Success eller Skipped| Finally
+    Check -->|Failed eller TimedOut| Catch
+    Catch --> Finally
+    Finally --> End
+
+    classDef scope fill:#F8FAFC,stroke:#334155,color:#0F172A,stroke-width:2px;
+    classDef decision fill:#FEF3C7,stroke:#92400E,color:#7C2D12,stroke-width:2px;
+    classDef terminal fill:#E0F2FE,stroke:#075985,color:#0C4A6E,stroke-width:2px;
+
+    class Try,Catch,Finally scope;
+    class Check decision;
+    class Start,End terminal;

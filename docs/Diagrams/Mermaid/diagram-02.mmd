@@ -1,0 +1,15 @@
+﻿sequenceDiagram
+    autonumber
+    participant CFG as AppEvent-konfiguration
+    participant POLL as Polling-workflow
+    participant API as Kallsystems-API
+    participant DB as IntegrationDB
+    participant TOP as Service Bus topic: EventNotification
+    participant SUB as Prenumererande floden
+
+    CFG-->>POLL: Leverera aktiv konfiguration
+    POLL->>API: Hamta forandrade objekt
+    API-->>POLL: Returnera andringar
+    POLL->>DB: Lagra ObjectEvents
+    DB->>TOP: Publicera EventNotification
+    TOP-->>SUB: Leverera till prenumeranter

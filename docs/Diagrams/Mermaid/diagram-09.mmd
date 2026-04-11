@@ -1,0 +1,30 @@
+﻿sequenceDiagram
+    autonumber
+    participant C as Klient
+    participant APIM as API Management
+    participant INI as Workflow: Demo-Session-LongRunning-Initiator
+    participant SB as Service Bus topic: Demo-Session-LongRunning
+    participant HND as Workflow: Demo-Session-LongRunning-Handler
+    participant RSP as Workflow: Demo-Session-LongRunning-Response
+
+    C->>APIM: HTTP POST
+    APIM->>INI: Invoke workflow
+    alt amount <= 500
+        INI-->>C: 200 OK (synkront)
+    else amount > 500
+        INI-->>C: Needs approval
+        INI->>SB: Send request (sessionId=customerId)
+    end
+
+    SB-->>HND: Session trigger (sessionId=customerId)
+    HND->>SB: Complete trigger message
+
+    loop var 30s (max 1 timme)
+        HND->>SB: Renew session lock
+        HND->>SB: Peek for response message
+    end
+
+    Note over RSP,SB: Externt system skickar godkannande
+    RSP->>SB: Send response (samma sessionId)
+    HND->>SB: Complete response message
+    HND->>SB: Close session

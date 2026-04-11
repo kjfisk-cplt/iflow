@@ -1,0 +1,25 @@
+﻿sequenceDiagram
+    autonumber
+    participant EVT as Service Bus subscription: EventNotification
+    participant GET as Workflow: Demo-HR-GetEmployeeChanges
+    participant API as HR Demo API
+    participant MAP as Workflow: Canonical transform
+    participant TOP as Service Bus topic: Demo-Employee
+    participant SUB1 as Workflow: Demo-Employee-Subscriber1
+    participant SUB2 as Workflow: Demo-Employee-Subscriber2
+    participant STATUS as Workflow: SetObjectEventStatus
+
+    EVT->>GET: Trigger Employee-event fran HRDemo
+    GET->>API: GET /hrdemo/api/Employee/{id}
+    API-->>GET: HR employee payload
+    GET->>MAP: Transformera till Canonical.Employee
+    MAP-->>GET: Returnera kanoniskt meddelande
+    GET->>TOP: Publish ObjectType=Employee
+    GET->>STATUS: Set status=T
+    par Fan-out till alla mottagare
+        TOP-->>SUB1: Leverera till Subscriber1
+        SUB1-->>TOP: Complete + tracking
+    and Fan-out till SE-filter
+        TOP-->>SUB2: Leverera till Subscriber2 CountryCode=SE
+        SUB2-->>TOP: Complete + tracking
+    end

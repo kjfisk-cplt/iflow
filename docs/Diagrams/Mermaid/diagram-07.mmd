@@ -1,0 +1,31 @@
+﻿sequenceDiagram
+    autonumber
+    participant CR as Workflow: Demo-CreateDeferredMessages
+    participant DEMO as Service Bus topic: Demo-Deferred
+    participant HANDLER as Workflow: Demo-DeferredMessagesHandler
+    participant CTRL as Service Bus topic: DeferredMessages
+    participant ACT as Workflow: Deferred message actions
+    participant CF as Common-Func via APIM
+    participant CLEAN as Workflow: RemoveDeferredMessages
+
+    loop 50 testmeddelanden
+        CR->>DEMO: Publish Demo-Deferred
+    end
+    DEMO-->>HANDLER: Trigger on Demo-Deferred-Handler
+    loop For varje meddelande
+        HANDLER->>DEMO: Defer meddelande
+    end
+    HANDLER->>CTRL: Publish SequenceNumbers + metadata
+    CTRL-->>ACT: Trigger Complete/Abandon/DeadLetter
+    ACT->>CF: Hamta lock info / deferred message
+    CF-->>ACT: Peek + current state
+    alt Action = Complete
+        ACT->>DEMO: Complete deferred message
+    else Action = Abandon
+        ACT->>DEMO: Abandon deferred message
+    else Action = DeadLetter
+        ACT->>DEMO: DeadLetter deferred message
+    end
+    CLEAN->>CF: Lista deferred messages med utgangna las
+    CF-->>CLEAN: Kandidater for cleanup
+    CLEAN->>DEMO: Complete utgangna deferred messages

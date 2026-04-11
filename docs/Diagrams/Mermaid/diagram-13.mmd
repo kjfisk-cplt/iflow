@@ -1,0 +1,19 @@
+﻿sequenceDiagram
+    autonumber
+    participant C as Klient
+    participant WF as Workflow: Demo-SchemaValidator
+    participant TRK as Tracking: LogicAppInitiatorTracker
+    participant JSV as Tracking: JsonSchemaValidator
+    participant ERR as Catch handler
+
+    C->>WF: HTTP request via APIM
+    WF->>TRK: Track workflow start
+    WF->>JSV: Validate payload against schema
+    alt Schema valid
+        JSV-->>WF: 200 OK
+        WF-->>C: Godkand, fortsatt affarslogik
+    else Schema invalid
+        JSV-->>WF: 422 Unprocessable
+        WF-->>C: Response 422
+        WF->>ERR: ForceError / terminate softly
+    end

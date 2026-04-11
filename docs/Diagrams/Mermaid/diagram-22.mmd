@@ -1,0 +1,22 @@
+﻿flowchart LR
+    Start([Workflow start]) --> Try
+
+    Try["Try scope<br/>Initiera CorrelationId<br/>InitiatorTracker -> APIM<br/>Affarslogik<br/>Complete SB vid behov"]
+    Check{"Try utfall"}
+    Catch["Catch scope<br/>ErrorTracker -> APIM<br/>Terminate"]
+    Finally["Finally scope<br/>MessageTracker -> APIM"]
+    End([Workflow end])
+
+    Try --> Check
+    Check -->|Success/Skipped| Finally
+    Check -->|Failed/TimedOut| Catch
+    Catch --> Finally
+    Finally --> End
+
+    classDef scope fill:#F8FAFC,stroke:#334155,color:#0F172A;
+    classDef decision fill:#FEF3C7,stroke:#92400E,color:#7C2D12;
+    classDef terminal fill:#E0F2FE,stroke:#075985,color:#0C4A6E;
+
+    class Try,Catch,Finally scope;
+    class Check decision;
+    class Start,End terminal;

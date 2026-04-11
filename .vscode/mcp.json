@@ -1,0 +1,42 @@
+{
+    "inputs": [
+        {
+            "id": "context7ApiKey",
+            "type": "promptString",
+            "description": "Context7 API Key",
+            "password": true
+        }
+    ],
+    "servers": {
+        "microsoft.docs.mcp": {
+            "type": "http",
+            "url": "https://learn.microsoft.com/api/mcp"
+        },
+        "context7": {
+            "type": "http",
+            "url": "https://mcp.context7.com/mcp",
+            "headers": {
+                "Authorization": "Bearer ${input:context7ApiKey}"
+            }
+        },
+        "azure": {
+            "type": "stdio",
+            "command": "npx",
+            "args": ["-y", "@azure/mcp@latest", "server", "start"]
+        },
+        "github": {
+            "type": "http",
+             "url": "https://api.githubcopilot.com/mcp/"
+        },
+        "playwright": {
+            "type": "stdio",
+            "command": "npx",
+            "args": ["-y", "@playwright/mcp@latest"]
+        },
+        "sequentialthinking": {
+            "type": "stdio",
+            "command": "npx",
+            "args": ["-y", "@modelcontextprotocol/server-sequential-thinking"]
+        }
+    }
+}

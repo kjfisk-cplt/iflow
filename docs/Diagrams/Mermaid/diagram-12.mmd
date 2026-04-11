@@ -1,0 +1,13 @@
+﻿sequenceDiagram
+    autonumber
+    participant IN as Inkommande payload
+    participant VAL as Schema-validator
+    participant OK as Godkand fortsatt
+    participant NOK as Underkand 422
+
+    IN->>VAL: Skicka payload for kontroll
+    alt Godkand payload
+        VAL-->>OK: Validering passerad
+    else Underkand payload
+        VAL-->>NOK: Returnera 422
+    end

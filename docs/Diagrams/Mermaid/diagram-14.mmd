@@ -1,0 +1,14 @@
+﻿sequenceDiagram
+    autonumber
+    participant IN as WorkorderId
+    participant AG as AI-agent
+    participant DESC as Beskrivningsverktyg
+    participant TERM as Terminologiverktyg
+    participant OUT as Kort sammanfattning
+
+    IN->>AG: Starta sammanfattning
+    AG->>DESC: Hamta beskrivningar
+    DESC-->>AG: Radata
+    AG->>TERM: Hamta termforklaringar
+    TERM-->>AG: Terminologi
+    AG-->>OUT: Generera kort sammanfattning

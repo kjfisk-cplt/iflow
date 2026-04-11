@@ -1,0 +1,12 @@
+﻿sequenceDiagram
+    autonumber
+    participant ORD as Ordermeddelanden
+    participant SID as Session per kund
+    participant COL as Samla meddelanden
+    participant CALC as Berakna total
+    participant PROC as Slutlig bearbetning
+
+    ORD->>SID: Skicka relaterade ordermeddelanden
+    SID->>COL: Gruppera pa session
+    COL->>CALC: Summera innehall
+    CALC->>PROC: Processera komplett convoy

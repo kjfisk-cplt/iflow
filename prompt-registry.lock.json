@@ -1,0 +1,26 @@
+{
+  "$schema": "https://github.com/AmadeusITGroup/prompt-registry/schemas/lockfile.schema.json",
+  "version": "1.0.0",
+  "generatedAt": "2026-04-06T20:43:33.362Z",
+  "generatedBy": "prompt-registry@0.0.0",
+  "bundles": {
+    "skills-github-awesome-copilot-what-context-needed": {
+      "version": "hash:9b6837b2f2dabcfa63e1dc3272cb58a9920d2589bb097268ad7a692ed7a12d8a",
+      "sourceId": "skills-609d450f5771",
+      "sourceType": "skills",
+      "installedAt": "2026-04-06T20:43:33.362Z",
+      "files": [
+        {
+          "path": ".github\\skills\\what-context-needed\\SKILL.md",
+          "checksum": "65ed7445bf561a5e5199ac77478d2691c05019e0dc32fdddc23db9e45bd9d135"
+        }
+      ]
+    }
+  },
+  "sources": {
+    "skills-609d450f5771": {
+      "type": "skills",
+      "url": "https://github.com/github/awesome-copilot/archive/refs/heads/main.zip"
+    }
+  }
+}

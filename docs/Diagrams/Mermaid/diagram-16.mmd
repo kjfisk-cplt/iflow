@@ -1,0 +1,13 @@
+﻿sequenceDiagram
+    autonumber
+    participant AI as AI-agent
+    participant MCP as MCP via APIM
+    participant TOOL as Logic App-verktyg
+    participant API as HR Demo API
+
+    AI->>MCP: MCP-begaran
+    MCP->>TOOL: Routa till verktyg
+    TOOL->>API: Backend-anrop
+    API-->>TOOL: Affarsdata
+    TOOL-->>MCP: Tool response
+    MCP-->>AI: Resultat till agent

@@ -1,0 +1,27 @@
+﻿sequenceDiagram
+    autonumber
+    participant AG as AI-agent
+    participant APIM as API Management
+    participant TOOL as Workflow: Logic App tool
+    participant API as HR Demo API
+
+    AG->>APIM: MCP tool call
+    alt Tool-GetHRDemoEmployees
+        APIM->>TOOL: Route to Tool-GetHRDemoEmployees
+        TOOL->>API: GET /Employee
+        API-->>TOOL: Employee list
+    else Tool-GetHRDemoDepartmentCodes
+        APIM->>TOOL: Route to Tool-GetHRDemoDepartmentCodes
+        TOOL->>API: GET /DepartmentCode
+        API-->>TOOL: Department codes
+    else Tool-GetHRDemoCountries
+        APIM->>TOOL: Route to Tool-GetHRDemoCountries
+        TOOL->>API: GET /Country
+        API-->>TOOL: Country codes
+    else Tool-CreateHRDemoEmployee
+        APIM->>TOOL: Route to Tool-CreateHRDemoEmployee
+        TOOL->>API: POST /Employee
+        API-->>TOOL: Created employee
+    end
+    TOOL-->>APIM: Workflow response
+    APIM-->>AG: MCP tool result

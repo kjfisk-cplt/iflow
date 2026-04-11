@@ -1,0 +1,29 @@
+﻿sequenceDiagram
+    autonumber
+    participant POLL as Workflow: GetApplicationObjectsToRun
+    participant DB as IntegrationDB
+    participant FETCH as Workflow: GetApplicationObjects
+    participant API as Kallsystems-API
+    participant REPUB as Workflow: ObjectEventReRun
+    participant TOP as Service Bus topic: EventNotification
+    participant STATUS as Workflow: SetObjectEventStatus
+    participant RET as Retention workflows
+
+    POLL->>DB: Las aktiva ApplicationObjects
+    DB-->>POLL: Returnera konfigurationer att kora
+    POLL->>FETCH: Starta sub-workflow per objekt
+    FETCH->>DB: AddApplicationLog status=Running
+    FETCH->>API: HTTP GET med lastChangedTime
+    API-->>FETCH: Returnera forandrade objekt
+    loop For varje objekt
+        FETCH->>DB: AddObjectEvent status=New
+    end
+    FETCH->>DB: UpdateApplicationLog status=Completed/Error
+    REPUB->>DB: Hamta ObjectEvents med status N/F
+    DB-->>REPUB: Returnera kandidater for publicering
+    loop For varje ObjectEvent
+        REPUB->>TOP: Publish EventNotification + CorrelationId
+    end
+    STATUS->>DB: SetObjectEventStatus N/P/T/F
+    RET->>DB: DeleteObjectEventRetention
+    RET->>DB: DeleteApplicationLogRetention

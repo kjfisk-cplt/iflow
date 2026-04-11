@@ -1,0 +1,89 @@
+﻿flowchart LR
+    EXT["Externa klienter"] -->|HTTPS| APIM["INT-APIM\nAPI Gateway"]
+
+    subgraph APP["Integrationslager"]
+        direction TB
+        LA1["INT-Common-Logic"]
+        LA2["INT-AppEvent-Logic"]
+        LA3["INT-Demo-Logic"]
+        F1["Common Functions"]
+        F2["Tracking Functions"]
+        F3["Logger Functions"]
+    end
+
+    subgraph MSG["INT-Messaging"]
+        SB1["Service Bus\nMessage Broker"]
+        SB2["Service Bus\nLogging"]
+        EH["Event Hub\nworkflowruntimelogs"]
+    end
+
+    subgraph DATA["Data & AI"]
+        SQL["IntegrationDB\nAzure SQL"]
+        ST["INT-Storage"]
+        AIF["INT-AI\nFoundry + Search"]
+        HR["INT-Demo-HR API"]
+    end
+
+    subgraph FOUNDATION["Plattformsfundament"]
+        NW["INT-Network\nVNet + Private DNS"]
+        MON["INT-Monitoring\nLA + App Insights"]
+        COM["INT-Common\nUAI + App Service Plans"]
+        KV["INT-KeyVault"]
+        CONN["INT-AuthConnectors"]
+    end
+
+    APIM --> LA1
+    APIM --> LA2
+    APIM --> LA3
+    APIM --> F1
+    APIM --> F2
+    APIM --> HR
+
+    LA1 --> SB1
+    LA2 --> SB1
+    LA3 --> SB1
+    F1 --> SB1
+    F2 --> SB1
+    F3 --> SB2
+
+    LA2 --> SQL
+    F2 --> SQL
+    F1 --> ST
+    F2 --> ST
+    LA3 --> AIF
+    AIF --> HR
+
+    LA1 --> EH
+    LA2 --> EH
+    LA3 --> EH
+
+    NW -. private endpoints .-> APIM
+    NW -. private endpoints .-> SQL
+    NW -. private endpoints .-> SB1
+    NW -. private endpoints .-> ST
+    KV -. secrets .-> APIM
+    KV -. secrets .-> F1
+    MON -. diagnostics .-> APIM
+    MON -. diagnostics .-> LA1
+    MON -. diagnostics .-> F1
+    COM -. managed identity .-> APIM
+    COM -. managed identity .-> LA1
+    COM -. managed identity .-> F1
+    CONN -. connectors .-> LA1
+    CONN -. connectors .-> LA3
+
+    classDef client fill:#EAF4FF,stroke:#1D4E89,color:#0B2E4F;
+    classDef api fill:#E6F7F2,stroke:#0F766E,color:#074B46;
+    classDef workflow fill:#FFF7E6,stroke:#B45309,color:#7C2D12;
+    classDef messaging fill:#EEF2FF,stroke:#3730A3,color:#1E1B4B;
+    classDef data fill:#F5F5F5,stroke:#525252,color:#262626;
+    classDef platform fill:#F0FDF4,stroke:#166534,color:#14532D;
+    classDef ai fill:#FFF1F2,stroke:#BE123C,color:#881337;
+
+    class EXT client;
+    class APIM,HR api;
+    class LA1,LA2,LA3,F1,F2,F3 workflow;
+    class SB1,SB2,EH messaging;
+    class SQL,ST data;
+    class AIF ai;
+    class NW,MON,COM,KV,CONN platform;

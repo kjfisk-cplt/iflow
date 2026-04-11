@@ -1,0 +1,19 @@
+﻿sequenceDiagram
+    autonumber
+    participant C as Klient
+    participant WF as Demo-AI-Description-Agent
+    participant ACT as Agent action
+    participant GPT as gpt-4o-mini via AI Foundry
+    participant DESC as Tool: Descriptions_Tool
+    participant TERM as Tool: Terminology_Tool
+
+    C->>WF: HTTP request med WorkorderId
+    WF->>ACT: Starta agent-action
+    ACT->>GPT: Skicka prompt + kontext
+    GPT->>DESC: Hamta arbetsorderbeskrivningar
+    DESC-->>GPT: Lista beskrivningar
+    GPT->>TERM: Hamta termlista
+    TERM-->>GPT: Branschtermer och forklaringar
+    GPT-->>ACT: Sammanfattning max 100 ord
+    ACT-->>WF: AI-resultat
+    WF-->>C: HTTP 200 med sammanfattning

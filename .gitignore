@@ -1,0 +1,95 @@
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfstate.backup
+crash.log
+crash.*.log
+*.tfvars.json
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+.terraformrc
+terraform.rc
+
+# Terraform plan files
+*.tfplan
+
+# Environment-specific files (review these - commit if they don't contain secrets)
+# Uncomment if your .tfvars files contain secrets
+# *.tfvars
+
+# VS Code - Personal settings
+.vscode/settings.json
+
+# Keep shared VS Code configuration
+!.vscode/extensions.json
+!.vscode/launch.json
+!.vscode/tasks.json
+!.vscode/mcp.json
+
+# Operating System
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# Windows
+$RECYCLE.BIN/
+*.lnk
+
+# Logs
+*.log
+logs/
+*.log.*
+
+# Node modules (if using Node.js tools)
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.npm
+.yarn/
+
+# Environment variables and secrets
+.env
+.env.local
+.env.*.local
+*.key
+*.pem
+secrets/
+*.secret
+
+# IDE
+.idea/
+*.swp
+*.swo
+*~
+.vscode-test/
+
+# Backup files
+*.bak
+*.tmp
+*.temp
+
+# Azure
+.azure/
+*.publish.xml
+*.azurePubxml
+
+# Build outputs
+dist/
+build/
+out/
+bin/
+obj/
+
+# Package files
+*.nupkg
+*.zip
+*.tar.gz

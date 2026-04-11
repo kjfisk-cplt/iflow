@@ -4,5 +4,13 @@
 			"path": "."
 		}
 	],
-	"settings": {}
+	"settings": {
+		"chat.tools.terminal.autoApprove": {
+			"az": true,
+			"aztfexport": true,
+			"terraform": true,
+			"New-Item": true,
+			"Out-Null": true
+		}
+	}			
 }

@@ -1,0 +1,17 @@
+﻿sequenceDiagram
+    autonumber
+    participant EVT as EventNotification
+    participant FETCH as HR-hamtning
+    participant MAP as Kanonisk transformering
+    participant TOP as Service Bus topic: Demo-Employee
+    participant SUB1 as Mottagare 1
+    participant SUB2 as Mottagare 2 SE
+
+    EVT->>FETCH: Starta employee-flode
+    FETCH-->>MAP: Returnera HR-data
+    MAP->>TOP: Publicera kanoniskt meddelande
+    par Alla mottagare
+        TOP-->>SUB1: Leverans till mottagare 1
+    and Sverige-filter
+        TOP-->>SUB2: Leverans till mottagare 2 SE
+    end

@@ -1,0 +1,12 @@
+﻿sequenceDiagram
+    autonumber
+    participant IN as Inkommande batch
+    participant DEF as Deferred-handler
+    participant CTRL as Service Bus topic: DeferredMessages
+    participant ACT as Meddelandeatgard
+    participant CLEAN as Cleanup
+
+    IN->>DEF: Batch meddelanden tas emot
+    DEF->>CTRL: Publicera kontrollmeddelanden
+    CTRL->>ACT: Valj livscykelatgard
+    ACT->>CLEAN: Rensa och avsluta batch

@@ -1,0 +1,49 @@
+﻿flowchart TB
+    EXT["EXTERNA KLIENTER"]
+    APIM["INT-APIM\nAPI Gateway\nAPIs: Common-Func, Common-Logic, AppEvent, Demo-ext, HRDemo, Tracking-Func"]
+
+    subgraph L2["Integrationslager"]
+        CFI["INT-Common-Functions-Isolated\n(3 func app)"]
+        CL["INT-Common-Logic\n(Logic App)"]
+        AEL["INT-AppEvent-Logic\n(Logic App)"]
+        DL["INT-Demo-Logic\n(Logic App)"]
+    end
+
+    subgraph L3["GEMENSAM INFRASTRUKTUR"]
+        MSG["INT-Messaging"]
+        STO["INT-Storage"]
+        DB["INT-Database"]
+        AI["INT-AI"]
+    end
+
+    subgraph L4["PLATTFORMSFUNDAMENT"]
+        NW["INT-Network"]
+        MON["INT-Monitoring"]
+        COM["INT-Common"]
+        KV["INT-KeyVault"]
+    end
+
+    EXT --> APIM
+    APIM --> CFI
+    APIM --> CL
+    APIM --> AEL
+    APIM --> DL
+
+    CFI --> MSG
+    CL --> MSG
+    AEL --> MSG
+    DL --> MSG
+
+    MSG --> NW
+    STO --> NW
+    DB --> NW
+    AI --> NW
+    MSG --> MON
+    STO --> COM
+    DB --> KV
+
+    classDef top fill:#EAF4FF,stroke:#1D4E89,color:#0B2E4F;
+    classDef layer fill:#F8FAFC,stroke:#334155,color:#0F172A;
+
+    class EXT,APIM top;
+    class CFI,CL,AEL,DL,MSG,STO,DB,AI,NW,MON,COM,KV layer;

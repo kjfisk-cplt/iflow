@@ -1,0 +1,14 @@
+﻿sequenceDiagram
+    autonumber
+    participant REQ as Klient
+    participant GATE as Initiering och beslut
+    participant ASYNC as Async begaran
+    participant WAIT as Vantan pa godkannande
+    participant RESP as Sessionssvar
+    participant DONE as Slutfort flode
+
+    REQ->>GATE: Skicka begaran
+    GATE->>ASYNC: Starta async jobb
+    ASYNC->>WAIT: Avvakta godkannande
+    WAIT->>RESP: Ta emot svar pa session
+    RESP->>DONE: Slutfor flodet
