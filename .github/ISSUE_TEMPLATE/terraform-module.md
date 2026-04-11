@@ -1,10 +1,21 @@
 ---
 name: Terraform Module Creation
-about: Request creation of a new Terraform infrastructure module
+about: Request creation of a new Terraform infrastructure module for iflow
 title: "[IaC] Create <module_name> Terraform Module"
-labels: infrastructure, terraform, enhancement
+labels: infrastructure, terraform, enhancement, copilot
 assignees: ''
 ---
+
+<!--
+🤖 CLOUD AGENT ASSIGNMENT
+To assign this issue to the GitHub Copilot cloud agent:
+1. Open the issue after creation
+2. In the Assignees panel, click the gear icon
+3. Select "Copilot" from the list
+4. Copilot will automatically create a branch and open a PR
+
+Or use the workflow: Actions → "Create & Assign Issue to Copilot"
+-->
 
 ## Overview
 

@@ -1,0 +1,83 @@
+name: Create & Assign Issue to Copilot
+
+on:
+  workflow_dispatch:
+    inputs:
+      issue_file:
+        description: "Issue file in .github/issues/ (e.g. int_common-terraform-module.md)"
+        required: true
+        type: string
+      labels:
+        description: "Comma-separated labels (default: infrastructure,terraform,enhancement,copilot)"
+        required: false
+        default: "infrastructure,terraform,enhancement,copilot"
+        type: string
+
+permissions:
+  issues: write
+
+jobs:
+  create-and-assign:
+    name: Create issue and assign to Copilot
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Read issue file
+        id: read_issue
+        run: |
+          ISSUE_PATH=".github/issues/${{ github.event.inputs.issue_file }}"
+
+          if [ ! -f "$ISSUE_PATH" ]; then
+            echo "::error::Issue file not found: $ISSUE_PATH"
+            exit 1
+          fi
+
+          # Extract title from first H1 heading in the markdown file
+          TITLE=$(grep -m1 "^# " "$ISSUE_PATH" | sed 's/^# //')
+          if [ -z "$TITLE" ]; then
+            echo "::error::No H1 heading found in $ISSUE_PATH — add a '# Title' line"
+            exit 1
+          fi
+
+          echo "title=$TITLE" >> "$GITHUB_OUTPUT"
+
+          # Write body (everything after the title line) to a secure temp file
+          BODY_FILE=$(mktemp)
+          tail -n +2 "$ISSUE_PATH" > "$BODY_FILE"
+          echo "body_file=$BODY_FILE" >> "$GITHUB_OUTPUT"
+
+      - name: Create GitHub issue
+        id: create_issue
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          ISSUE_URL=$(gh issue create \
+            --title "${{ steps.read_issue.outputs.title }}" \
+            --body-file "${{ steps.read_issue.outputs.body_file }}" \
+            --label "${{ github.event.inputs.labels }}" \
+            --repo "${{ github.repository }}")
+
+          echo "Created issue: $ISSUE_URL"
+          ISSUE_NUMBER=$(echo "$ISSUE_URL" | grep -oE '[0-9]+$')
+          echo "issue_number=$ISSUE_NUMBER" >> "$GITHUB_OUTPUT"
+          echo "issue_url=$ISSUE_URL" >> "$GITHUB_OUTPUT"
+
+      - name: Assign issue to Copilot
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh issue edit "${{ steps.create_issue.outputs.issue_number }}" \
+            --add-assignee "@copilot" \
+            --repo "${{ github.repository }}" || \
+          echo "::warning::Could not assign to @copilot — assign manually in the issue UI"
+
+      - name: Summary
+        run: |
+          echo "## ✅ Issue created and assigned to Copilot" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "**Issue:** ${{ steps.create_issue.outputs.issue_url }}" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "Copilot will now create a branch and open a PR implementing the task." >> "$GITHUB_STEP_SUMMARY"
