@@ -1,0 +1,190 @@
+name: Terraform Apply
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'infrastructure_as_code/environments/**/*.tf'
+      - 'infrastructure_as_code/environments/**/*.tfvars'
+  
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to deploy'
+        required: true
+        type: choice
+        options:
+          - dev
+          - test
+          - prod
+      module:
+        description: 'Module to deploy (e.g., int_network)'
+        required: true
+        type: string
+
+permissions:
+  id-token: write  # Required for OIDC authentication
+  contents: read   # Read repository content
+
+jobs:
+  apply:
+    name: Apply ${{ inputs.module || 'auto-detected' }} to ${{ inputs.environment || 'dev' }}
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment || 'dev' }}  # Enables environment protection rules
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2  # Need parent commit for auto-detection
+      
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.9.0
+      
+      - name: Azure Login (OIDC)
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      
+      - name: Determine module path
+        id: detect
+        run: |
+          if [ -n "${{ inputs.module }}" ]; then
+            # Manual workflow dispatch
+            MODULE_PATH="infrastructure_as_code/environments/${{ inputs.environment }}/${{ inputs.module }}"
+            ENV="${{ inputs.environment }}"
+            MODULE="${{ inputs.module }}"
+          else
+            # Auto-detect from push event
+            CHANGED_FILES=$(git diff --name-only ${{ github.event.before }}..${{ github.sha }})
+            echo "Changed files:"
+            echo "$CHANGED_FILES"
+            
+            MODULE_PATH=$(echo "$CHANGED_FILES" | \
+              grep -oP 'infrastructure_as_code/environments/[^/]+/int_[^/]+' | \
+              head -n 1)
+            
+            if [ -z "$MODULE_PATH" ]; then
+              echo "::error::No Terraform module detected in changed files"
+              exit 1
+            fi
+            
+            ENV=$(echo $MODULE_PATH | cut -d'/' -f3)
+            MODULE=$(echo $MODULE_PATH | cut -d'/' -f4)
+          fi
+          
+          # Validate path exists
+          if [ ! -d "$MODULE_PATH" ]; then
+            echo "::error::Module path does not exist: $MODULE_PATH"
+            exit 1
+          fi
+          
+          echo "module_path=$MODULE_PATH" >> $GITHUB_OUTPUT
+          echo "env=$ENV" >> $GITHUB_OUTPUT
+          echo "module=$MODULE" >> $GITHUB_OUTPUT
+          
+          echo "✓ Deploying: $MODULE to $ENV environment"
+      
+      - name: Terraform Format Check
+        working-directory: ${{ steps.detect.outputs.module_path }}
+        run: terraform fmt -check -recursive
+        continue-on-error: true
+      
+      - name: Terraform Init
+        working-directory: ${{ steps.detect.outputs.module_path }}
+        run: |
+          terraform init \
+            -backend-config="../backend.conf" \
+            -backend-config="key=${{ steps.detect.outputs.module }}.tfstate"
+        env:
+          ARM_USE_OIDC: true
+          ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+          ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+      
+      - name: Terraform Validate
+        working-directory: ${{ steps.detect.outputs.module_path }}
+        run: terraform validate
+      
+      - name: Terraform Plan
+        id: plan
+        working-directory: ${{ steps.detect.outputs.module_path }}
+        run: |
+          terraform plan \
+            -var-file="terraform.tfvars" \
+            -out=tfplan \
+            -no-color 2>&1 | tee plan-output.txt
+          
+          # Extract change summary
+          CHANGES=$(grep -oP 'Plan: \K.*' plan-output.txt || echo "No changes")
+          echo "changes=$CHANGES" >> $GITHUB_OUTPUT
+        env:
+          ARM_USE_OIDC: true
+          ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+          ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+      
+      - name: Terraform Apply
+        id: apply
+        working-directory: ${{ steps.detect.outputs.module_path }}
+        run: |
+          terraform apply -auto-approve tfplan 2>&1 | tee apply-output.txt
+        env:
+          ARM_USE_OIDC: true
+          ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+          ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+      
+      - name: Generate deployment summary
+        if: always()
+        run: |
+          if [ "${{ steps.apply.outcome }}" == "success" ]; then
+            cat >> $GITHUB_STEP_SUMMARY <<EOF
+          ## ✅ Deployment Successful
+          
+          **Module:** \`${{ steps.detect.outputs.module }}\`  
+          **Environment:** \`${{ steps.detect.outputs.env }}\`  
+          **Changes:** ${{ steps.plan.outputs.changes }}
+          
+          ### Resources Modified
+          
+          \`\`\`
+          $(tail -n 20 ${{ steps.detect.outputs.module_path }}/apply-output.txt)
+          \`\`\`
+          
+          ---
+          *Deployed by:* @${{ github.actor }} | *Commit:* ${{ github.sha }} | *Run:* [#${{ github.run_number }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
+          EOF
+          else
+            cat >> $GITHUB_STEP_SUMMARY <<EOF
+          ## ❌ Deployment Failed
+          
+          **Module:** \`${{ steps.detect.outputs.module }}\`  
+          **Environment:** \`${{ steps.detect.outputs.env }}\`
+          
+          ### Error Output
+          
+          \`\`\`
+          $(tail -n 30 ${{ steps.detect.outputs.module_path }}/apply-output.txt)
+          \`\`\`
+          
+          See [runbook](../infrastructure_as_code/docs/runbooks/STATE_RECOVERY.md) for troubleshooting.
+          
+          ---
+          *Run:* [#${{ github.run_number }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
+          EOF
+          fi
+      
+      - name: Upload apply logs
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: apply-logs-${{ steps.detect.outputs.env }}-${{ steps.detect.outputs.module }}-${{ github.run_number }}
+          path: |
+            ${{ steps.detect.outputs.module_path }}/plan-output.txt
+            ${{ steps.detect.outputs.module_path }}/apply-output.txt
+          retention-days: 30
