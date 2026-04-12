@@ -142,11 +142,95 @@ terraform import azurerm_managed_identity.example /subscriptions/<sub-id>/resour
 
 ## Bootstrap Process
 
-Before using Terraform remote state, you must **manually create** the Azure Storage infrastructure. This one-time setup is performed per environment.
+Before using Terraform remote state, you must create the Azure Storage infrastructure. This one-time setup is performed per environment using the provided automation scripts.
 
-### Step 1: Create Storage Account
+### Automated Setup (Recommended)
 
-Run these Azure CLI commands for each environment (dev, test, prod):
+Use the PowerShell scripts in `infrastructure_as_code/scripts/` for automated setup:
+
+#### Step 1: Bootstrap State Storage
+
+```powershell
+cd infrastructure_as_code/scripts
+
+# Preview what will be created
+.\bootstrap-state-storage.ps1 -Environment dev -SubscriptionId "<subscription-id>" -WhatIf
+
+# Create state storage for each environment
+.\bootstrap-state-storage.ps1 -Environment dev -SubscriptionId "<subscription-id>"
+.\bootstrap-state-storage.ps1 -Environment test -SubscriptionId "<subscription-id>"
+.\bootstrap-state-storage.ps1 -Environment prod -SubscriptionId "<subscription-id>"
+```
+
+**What it creates per environment**:
+
+| Resource | Naming | Notes |
+| --- | --- | --- |
+| Resource Group | `rg-tfstate-iflow-{env}` | Tagged with environment |
+| Storage Account | `stotfstateiflow{env}` | LRS for dev/test, GRS for prod |
+| Blob Container | `tfstate` | For state files |
+| Blob Versioning | Enabled | Infinite retention |
+| Soft Delete | 30 days | Recovery window |
+| RBAC | Storage Blob Data Contributor | Current user |
+
+**Script Parameters**:
+
+| Parameter | Required | Default | Description |
+| --- | --- | --- | --- |
+| `-Environment` | Yes | — | `dev`, `test`, or `prod` |
+| `-SubscriptionId` | Yes | — | Azure subscription GUID |
+| `-Location` | No | `swedencentral` | Azure region |
+| `-Workload` | No | `iflow` | Workload name for naming |
+| `-AssignRbac` | No | `$true` | Grant current user blob access |
+| `-ServicePrincipalId` | No | — | SP object ID for CI/CD access |
+| `-WhatIf` | No | — | Preview without changes |
+
+#### Step 2: Configure OIDC for GitHub Actions
+
+After bootstrapping state storage, configure keyless authentication for CI/CD:
+
+```powershell
+# Preview OIDC configuration
+.\configure-oidc.ps1 -SubscriptionId "<subscription-id>" -GitHubOrg "kjfisk-cplt" -GitHubRepo "iflow" -WhatIf
+
+# Create service principal with federated credentials
+.\configure-oidc.ps1 -SubscriptionId "<subscription-id>" -GitHubOrg "kjfisk-cplt" -GitHubRepo "iflow"
+```
+
+**What it creates**:
+
+- Service Principal (`gh-actions-iflow`) with federated credentials for:
+  - Main branch deployments
+  - Pull request validation
+  - Environment-specific deployments (dev, test, prod)
+- RBAC role assignments:
+  - `Contributor` at subscription scope
+  - `Storage Blob Data Contributor` on state storage accounts
+
+**After running**, add these GitHub secrets (output by script):
+
+| Secret Name | Description |
+| --- | --- |
+| `AZURE_CLIENT_ID` | Service principal app ID |
+| `AZURE_TENANT_ID` | Azure AD tenant ID |
+| `AZURE_SUBSCRIPTION_ID` | Target subscription ID |
+
+**Script Parameters**:
+
+| Parameter | Required | Default | Description |
+| --- | --- | --- | --- |
+| `-SubscriptionId` | Yes | — | Azure subscription GUID |
+| `-GitHubOrg` | Yes | — | GitHub organization |
+| `-GitHubRepo` | Yes | — | Repository name |
+| `-ServicePrincipalName` | No | `gh-actions-iflow` | SP display name |
+| `-StateStorageResourceGroups` | No | `rg-tfstate-iflow-dev,...` | Comma-separated RG names |
+| `-WhatIf` | No | — | Preview without changes |
+
+### Manual Setup (Reference)
+
+For manual setup or troubleshooting, see the individual Azure CLI commands below.
+
+#### Create Storage Account
 
 ```powershell
 # Variables
@@ -171,33 +255,27 @@ az storage account create `
   --kind StorageV2 `
   --https-only true `
   --min-tls-version TLS1_2 `
-  --allow-blob-public-access false `
-  --default-action Deny `
-  --bypass AzureServices
+  --allow-blob-public-access false
 ```
 
-### Step 2: Enable Versioning and Soft Delete
+#### Enable Versioning and Soft Delete
 
 ```powershell
 # Enable blob versioning (immutable history)
 az storage account blob-service-properties update `
   --account-name $SA `
+  --resource-group $RG `
   --enable-versioning true
 
 # Enable soft delete for blobs (30-day recovery)
 az storage account blob-service-properties update `
   --account-name $SA `
+  --resource-group $RG `
   --enable-delete-retention true `
   --delete-retention-days 30
-
-# Enable soft delete for containers (30-day recovery)
-az storage account blob-service-properties update `
-  --account-name $SA `
-  --enable-container-delete-retention true `
-  --container-delete-retention-days 30
 ```
 
-### Step 3: Create Container
+#### Create Container
 
 ```powershell
 # Create tfstate container
@@ -207,9 +285,7 @@ az storage container create `
   --auth-mode login
 ```
 
-### Step 4: Configure RBAC
-
-Grant appropriate access to users and service principals:
+#### Configure RBAC
 
 ```powershell
 # Grant your user account access (for local development)
@@ -217,15 +293,7 @@ $USER_OBJECT_ID = (az ad signed-in-user show --query id -o tsv)
 az role assignment create `
   --assignee $USER_OBJECT_ID `
   --role "Storage Blob Data Contributor" `
-  --scope "/subscriptions/<sub-id>/resourceGroups/$RG/providers/Microsoft.Storage/storageAccounts/$SA/blobServices/default/containers/$CONTAINER"
-
-# Grant GitHub Actions service principal access (for CI/CD)
-# See CICD_PREREQUISITES.md for service principal creation
-$SP_APP_ID = "<service-principal-app-id>"
-az role assignment create `
-  --assignee $SP_APP_ID `
-  --role "Storage Blob Data Contributor" `
-  --scope "/subscriptions/<sub-id>/resourceGroups/$RG/providers/Microsoft.Storage/storageAccounts/$SA/blobServices/default/containers/$CONTAINER"
+  --scope "/subscriptions/<sub-id>/resourceGroups/$RG/providers/Microsoft.Storage/storageAccounts/$SA"
 ```
 
 ### Step 5: Optional - Private Endpoints (Zero Trust)

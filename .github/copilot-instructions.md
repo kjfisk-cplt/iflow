@@ -127,6 +127,41 @@ terraform validate
 - **Cross-stack dependencies** — Use `terraform_remote_state` when modules reference each other
 - **Backend key management** — Each stack requires unique backend key
 
+## Documentation Requirements
+
+**Principle**: Any meaningful code change requires a documentation check. This applies to all changes, not just specific categories.
+
+### When Making Changes, Always Check
+
+| Change Type            | Documentation to Review/Update                                             |
+| ---------------------- | -------------------------------------------------------------------------- |
+| New Terraform module   | `docs/ARCHITECTURE.md`, `copilot-instructions.md` (Architecture section)   |
+| New/modified scripts   | `infrastructure_as_code/docs/TERRAFORM_STATE_SETUP.md`, script `README.md` |
+| New variables/outputs  | Module's inline comments, `_shared/naming` if naming-related               |
+| Architecture decisions | `docs/ARCHITECTURE.md`, relevant Mermaid diagrams in `docs/Diagrams/`      |
+| New dependencies       | `providers.tf` comments, `copilot-instructions.md` (Required Providers)    |
+| Conventions changes    | `copilot-instructions.md`, `.github/instructions/*.md`                     |
+| Agent customizations   | Relevant `.agent.md`, `.instructions.md`, or `SKILL.md` files              |
+
+### Documentation Locations
+
+| Document                                   | Purpose                         | Update When                          |
+| ------------------------------------------ | ------------------------------- | ------------------------------------ |
+| `docs/ARCHITECTURE.md`                     | Platform architecture (Swedish) | Adding modules, changing design      |
+| `.github/copilot-instructions.md`          | Agent workspace context         | Any structural/convention change     |
+| `.github/instructions/*.md`                | Domain-specific guidance        | Tool/pattern changes                 |
+| `infrastructure_as_code/docs/*.md`         | IaC operational guides          | Script, workflow, or process changes |
+| `infrastructure_as_code/scripts/README.md` | Script usage reference          | Adding/modifying scripts             |
+
+### Agent Responsibility
+
+When completing any task:
+
+1. **Before finishing**: Check if documentation needs updating
+2. **Proactively ask**: "Should I update any documentation for this change?"
+3. **Update inline**: Include doc updates in the same task when obvious
+4. **Flag for review**: Note any docs that may need human review
+
 ## Known Issues
 
 - **Typo**: `_shared/vaiables.tf` should be `variables.tf`

@@ -40,7 +40,6 @@ This guide shows how to create a GitHub issue from a task file in this repositor
 ## Quick Start — Via MCP (GitHub Copilot Chat)
 
 Use the GitHub MCP server tools in VS Code Copilot Chat to create and assign issues programmatically:
-
 ```
 @github Create a GitHub issue titled "[IaC] Create int_common Terraform Module"
 with the body from .github/issues/int_common-terraform-module.md
@@ -71,6 +70,7 @@ Task files live in `.github/issues/`. Follow this structure:
 ```
 
 **Rules for cloud-agent consumption:**
+
 - Start with a single `# Title` — this becomes the issue title
 - Use `- [ ]` checklists for acceptance criteria — Copilot tracks these
 - Be explicit about file paths, naming conventions, and provider versions
@@ -83,13 +83,17 @@ Task files live in `.github/issues/`. Follow this structure:
 The ready-to-use task file is at `.github/issues/int_common-terraform-module.md`.
 
 **Run the workflow:**
+
 ```
+
 Actions → Create & Assign Issue to Copilot
 issue_file: int_common-terraform-module.md
 ```
 
 **Or via CLI (if `gh` is authenticated):**
+
 ```bash
+
 gh workflow run assign-to-copilot.yml \
   -f issue_file=int_common-terraform-module.md
 ```
@@ -101,9 +105,9 @@ gh workflow run assign-to-copilot.yml \
 ```
 .github/
 ├── issues/                          # Task description files (source of truth)
-│   └── int_common-terraform-module.md
-├── ISSUE_TEMPLATE/
-│   └── terraform-module.md          # GitHub issue template (UI creation)
+│   ├── int_common-terraform-module.md
+│   └── template/
+│       └── terraform-module.md      # GitHub issue template (UI creation)
 └── workflows/
     └── assign-to-copilot.yml        # Workflow: create + assign to Copilot
 ```
