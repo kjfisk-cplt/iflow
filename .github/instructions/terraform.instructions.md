@@ -18,11 +18,12 @@ applyTo: "**/*.tf"
   - Regularly rotate credentials and secrets.
   - Automate the rotation of secrets, where possible.
 - Use environment variables or CI/CD pipeline secrets to pass sensitive values to Terraform at runtime.
-  - This keeps sensitive values out of your Terraform state files and source code.
+  - This helps keep sensitive values out of source control and reduces accidental exposure in logs or interactive usage, but it does not guarantee those values stay out of Terraform state.
 - Never commit sensitive information such as credentials, API keys, passwords, certificates, or Terraform state to version control.
   - Use `.gitignore` to exclude files containing sensitive information from version control.
+  - Protect Terraform state with a secure remote backend and appropriate encryption and access controls, such as RBAC and least-privilege access.
 - Always mark sensitive variables as `sensitive = true` in your Terraform configurations.
-  - This prevents sensitive values from being displayed in the Terraform plan or apply output.
+  - This helps redact sensitive values from Terraform plan or apply output, but does not prevent sensitive values from being stored in state if providers persist them.
 - Use Azure RBAC roles and Managed Identities to control access to resources.
   - Follow the principle of least privilege when assigning permissions.
   - Prefer User-Assigned Managed Identities over service principal credentials where possible.
