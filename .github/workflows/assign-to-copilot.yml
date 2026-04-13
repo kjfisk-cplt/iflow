@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       issue_file:
-        description: "Issue file in .github/issues/ (e.g. int_common-terraform-module.md)"
+        description: "Repository-relative path to a task file (e.g. docs/tasks/my-module.md)"
         required: true
         type: string
       labels:
@@ -28,7 +28,7 @@ jobs:
       - name: Read issue file
         id: read_issue
         run: |
-          ISSUE_PATH=".github/issues/${{ github.event.inputs.issue_file }}"
+          ISSUE_PATH="${{ github.event.inputs.issue_file }}"
 
           if [ ! -f "$ISSUE_PATH" ]; then
             echo "::error::Issue file not found: $ISSUE_PATH"
