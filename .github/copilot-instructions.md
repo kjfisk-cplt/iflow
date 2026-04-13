@@ -54,15 +54,46 @@ infrastructure_as_code/environments/{env}/int_{domain}/
 
 ### Naming Patterns (Azure CAF)
 
+**Two naming modules** for different scopes:
+
+| Module                  | Scope               | When to Use                                                       |
+| ----------------------- | ------------------- | ----------------------------------------------------------------- |
+| `_shared/naming`        | Platform resources  | VNet, NSG, APIM, shared Key Vault, common App Service Plans       |
+| `_shared/naming-domain` | Domain integrations | HR, Finance, SAP — system-specific Logic Apps, Functions, Storage |
+
+**Platform naming** (`_shared/naming`):
+
 ```
-rg-{workload}-{purpose}-{env}           # Resource groups
-vnet-{workload}-integration-{env}       # Virtual networks
-nsg-{workload}-integration-{env}        # Network security groups
-sto{purpose}{workload}{env}             # Storage (no hyphens, max 24 chars)
-pep-{service}-{workload}-{env}          # Private endpoints
+rg-{workload}-{purpose}-{env}           # rg-iflow-network-dev
+vnet-{workload}-integration-{env}       # vnet-iflow-integration-dev
+sto{purpose}{workload}{env}             # stomaboringiflowdev
 ```
 
-Example: `rg-iflow-network-dev`
+**Domain naming** (`_shared/naming-domain`):
+
+```
+rg-{workload}-{domain}-{env}            # rg-iflow-hr-dev
+logic-{workload}-{domain}-{env}         # logic-iflow-hr-dev
+func-{workload}-{domain}-{purpose}-{env}   # func-iflow-hr-validatedata-dev
+sto{domain}{workload}{env}              # stohriflowdev
+```
+
+**Usage**:
+
+```hcl
+# Platform stack (int_network, int_common)
+module "naming" {
+  source = "../_shared/naming"
+  # ... workload, env, location
+}
+
+# Domain stack (int_hr, int_finance)
+module "naming" {
+  source = "../_shared/naming-domain"
+  domain = "hr"  # Additional variable
+  # ... workload, env, location
+}
+```
 
 ### Deployment Workflow
 
@@ -91,7 +122,7 @@ terraform apply -var-file="terraform.tfvars"
 - **Required**: `subscription_id` (sensitive), `workload`, `env`, `location`
 - **Environment validation**: Must be `dev`, `test`, or `prod`
 - **Default location**: `swedencentral`
-- **Shared naming**: All stacks use `module.naming` from `_shared/naming`
+- **Shared naming**: Platform stacks use `_shared/naming`; domain stacks use `_shared/naming-domain`
 
 ## Code Style
 
@@ -126,6 +157,7 @@ terraform validate
 - **No secrets in source** — Sensitive values in Key Vault or `terraform.tfvars` (git-ignored)
 - **Cross-stack dependencies** — Use `terraform_remote_state` when modules reference each other
 - **Backend key management** — Each stack requires unique backend key
+- **Workspace settings over config files** — Put linter/tool configs (markdownlint, eslint) in `iflow.code-workspace` settings, not separate files in root
 
 ## Documentation Requirements
 
@@ -137,7 +169,7 @@ terraform validate
 | ---------------------- | -------------------------------------------------------------------------- |
 | New Terraform module   | `docs/ARCHITECTURE.md`, `copilot-instructions.md` (Architecture section)   |
 | New/modified scripts   | `infrastructure_as_code/docs/TERRAFORM_STATE_SETUP.md`, script `README.md` |
-| New variables/outputs  | Module's inline comments, `_shared/naming` if naming-related               |
+| New variables/outputs  | Module's inline comments, `_shared/naming` or `_shared/naming-domain`      |
 | Architecture decisions | `docs/ARCHITECTURE.md`, relevant Mermaid diagrams in `docs/Diagrams/`      |
 | New dependencies       | `providers.tf` comments, `copilot-instructions.md` (Required Providers)    |
 | Conventions changes    | `copilot-instructions.md`, `.github/instructions/*.md`                     |

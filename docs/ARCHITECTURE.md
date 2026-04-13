@@ -668,7 +668,75 @@ Logic Apps-runtime streamas via Event Hub (`workflowruntimelogs`) med consumer g
 
 ---
 
-## 21. Arkitekturdiagram Mermaid
+## 21. Namngivningskonventioner
+
+Plattformen använder två namngivningsmoduler för konsekventa resursnamn enligt Azure CAF-mönster.
+
+### Tvåskiktsmodell
+
+| Modul | Scope | Användning |
+|-------|-------|------------|
+| `_shared/naming` | Plattformsresurser | VNet, NSG, centralt Key Vault, APIM, shared App Service Plans |
+| `_shared/naming-domain` | Domänspecifika integrationer | HR-integrationer, Finance-integrationer, systemspecifika Logic Apps/Functions |
+
+### Plattformsnamn (`naming`)
+
+För gemensam infrastruktur som delas av alla integrationer:
+
+```
+rg-{workload}-{purpose}-{env}           # rg-iflow-network-dev
+vnet-{workload}-integration-{env}       # vnet-iflow-integration-dev
+kv-{workload}-{env}                     # kv-iflow-dev
+apim-{workload}-{env}                   # apim-iflow-dev
+```
+
+### Domännamn (`naming-domain`)
+
+För system-/domänspecifika integrationer med `domain`-variabel:
+
+```
+rg-{workload}-{domain}-{env}            # rg-iflow-hr-dev
+logic-{workload}-{domain}-{env}         # logic-iflow-hr-dev  
+logic-{workload}-{domain}-{purpose}-{env}  # logic-iflow-hr-syncemployees-dev
+func-{workload}-{domain}-{purpose}-{env}   # func-iflow-finance-invoiceparser-dev
+sto{domain}{workload}{env}              # stohriflowdev
+```
+
+### Användningsexempel
+
+```hcl
+# Plattformsstack (int_network, int_common, etc.)
+module "naming" {
+  source   = "../_shared/naming"
+  workload = var.workload  # "iflow"
+  env      = var.env       # "dev"
+  location = var.location
+}
+
+# Domänstack (int_hr, int_finance, etc.)
+module "naming" {
+  source   = "../_shared/naming-domain"
+  workload = var.workload  # "iflow"
+  env      = var.env       # "dev"
+  domain   = "hr"          # Domänidentifierare
+  location = var.location
+}
+```
+
+### Taggning
+
+Båda modulerna genererar standardtaggar via `module.naming.tags`:
+
+| Tagg | Värde | Syfte |
+|------|-------|-------|
+| `workload` | iflow | Kostnadsallokering per plattform |
+| `environment` | dev/test/prod | Miljöseparering |
+| `domain` | hr/finance/sap | (Endast domain-modul) Affärsdomän |
+| `managed_by` | terraform | Drift-identifiering |
+
+---
+
+## 22. Arkitekturdiagram Mermaid
 
 ### Diagramlegend
 

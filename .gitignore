@@ -16,9 +16,10 @@ terraform.rc
 # Terraform plan files
 *.tfplan
 
-# Environment-specific files (review these - commit if they don't contain secrets)
-# Uncomment if your .tfvars files contain secrets
-# *.tfvars
+# Environment-specific tfvars (contain subscription IDs and other sensitive values)
+# Use terraform.tfvars.example as template
+terraform.tfvars
+*.auto.tfvars
 
 # VS Code - Personal settings
 .vscode/settings.json

@@ -1,0 +1,39 @@
+# Copy this file to terraform.tfvars and fill in your values.
+# terraform.tfvars is git-ignored and should never be committed.
+#
+# Run: terraform init -backend-config="../backend.conf" -backend-config="key=int_network.tfstate"
+# Then: terraform plan -var-file="terraform.tfvars"
+
+subscription_id = "00000000-0000-0000-0000-000000000000"  # Your Azure subscription ID
+workload        = "iflow"
+env             = "dev"
+location        = "swedencentral"
+
+vnet_address_space = ["10.0.0.0/16"]
+
+# Override subnets if your environment requires different CIDR blocks or delegations.
+subnets = {
+  "snet-private-endpoints" = {
+    address_prefixes                  = ["10.0.0.0/24"]
+    private_endpoint_network_policies = "Disabled"
+  }
+  "snet-integration" = {
+    address_prefixes = ["10.0.1.0/24"]
+    delegations = [{
+      name = "delegation-webfarm"
+      service_delegation = {
+        name = "Microsoft.Web/serverFarms"
+      }
+    }]
+  }
+  "snet-apim" = {
+    address_prefixes = ["10.0.2.0/24"]
+  }
+}
+
+pep_monitoring_subnet_key = "snet-private-endpoints"
+
+# Terraform state backend — must match your backend.conf
+tfstate_resource_group_name  = "rg-tfstate"
+tfstate_storage_account_name = "stoterraformstate"
+tfstate_container_name       = "tfstate"

@@ -37,7 +37,7 @@ module "nsg" {
 
 module "vnet" {
   source  = "Azure/avm-res-network-virtualnetwork/azurerm"
-  version = "~> 1.0"
+  version = "~> 0.17"
 
   name          = module.naming.vnet_name
   location      = var.location

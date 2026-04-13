@@ -5,6 +5,7 @@
 		}
 	],
 	"settings": {
+		// === Copilot Settings ===
 		"chat.subagents.allowInvocationsFromSubagents": true,
 		"chat.tools.terminal.autoApprove": {
 			"az": true,
@@ -12,16 +13,26 @@
 			"terraform": true,
 			"New-Item": true,
 			"Out-Null": true,
-			// Allow the `mkdir` command
 			"mkdir": true,
-			// Allow `git status` and commands starting with `git show`
 			"/^git (status|show\\b.*)$/": true,
-			// Block the `del` command
-			"del": false,
+			"del": false
 		},
 		"github.copilot.chat.codeGeneration.useInstructionFiles": true,
 		"github.copilot.chat.backgroundAgent.enabled": true,
 		"github.copilot.chat.tools.memory.enabled": true,
 		"github.copilot.chat.copilotMemory.enabled": true,
-	}			
+
+		// === Linter Settings ===
+		"markdownlint.config": {
+			"MD012": false,
+			"MD013": false,
+			"MD024": { "siblings_only": true },
+			"MD032": false,
+			"MD033": { "allowed_elements": ["br", "img", "a", "details", "summary", "sub", "sup"] },
+			"MD040": false,
+			"MD041": false,
+			"MD049": false,
+			"MD060": false
+		}
+	}
 }
