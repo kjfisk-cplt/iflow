@@ -1,33 +1,21 @@
 # Assigning Tasks to the GitHub Copilot Cloud Agent
 
-This guide shows how to create a GitHub issue from a task file in this repository and assign it to the GitHub Copilot cloud agent so it implements the task autonomously.
+This guide shows how to create a GitHub issue and assign it to the GitHub Copilot cloud agent so it implements the task autonomously.
 
 ---
 
 ## How It Works
 
-1. A task description is written as a Markdown file in `.github/issues/`
+1. A task description is written as a Markdown file anywhere in the repository
 2. A GitHub Actions workflow reads the file, creates the issue, and assigns `@copilot`
 3. Copilot creates a branch and opens a PR with the implementation
 4. You review and merge the PR
 
 ---
 
-## Quick Start — Via GitHub Actions Workflow
+## Quick Start — Via GitHub UI (Issue Template)
 
-**Fastest method.** No UI needed.
-
-1. Go to **Actions → Create & Assign Issue to Copilot**
-2. Click **Run workflow**
-3. Fill in:
-   - `issue_file`: filename from `.github/issues/` (e.g. `int_common-terraform-module.md`)
-   - `labels`: leave default or customize
-4. Click **Run workflow**
-5. Copilot starts working automatically
-
----
-
-## Quick Start — Via GitHub UI
+**Easiest method.**
 
 1. Click **Issues → New issue**
 2. Select the **Terraform Module Creation** template
@@ -37,12 +25,27 @@ This guide shows how to create a GitHub issue from a task file in this repositor
 
 ---
 
+## Quick Start — Via GitHub Actions Workflow
+
+Use this method when you have a task file already written in the repository.
+
+1. Go to **Actions → Create & Assign Issue to Copilot**
+2. Click **Run workflow**
+3. Fill in:
+   - `issue_file`: path to the task file in the repo (e.g. `docs/tasks/my-module.md`)
+   - `labels`: leave default or customize
+4. Click **Run workflow**
+5. Copilot starts working automatically
+
+---
+
 ## Quick Start — Via MCP (GitHub Copilot Chat)
 
 Use the GitHub MCP server tools in VS Code Copilot Chat to create and assign issues programmatically:
+
 ```
-@github Create a GitHub issue titled "[IaC] Create int_common Terraform Module"
-with the body from .github/issues/int_common-terraform-module.md
+@github Create a GitHub issue titled "[IaC] Create int_keyvault Terraform Module"
+with body describing the module requirements
 and assign it to copilot with labels: infrastructure, terraform, enhancement, copilot
 ```
 
@@ -50,9 +53,9 @@ The MCP tools available via `@github` handle authentication automatically — no
 
 ---
 
-## Writing a New Task File
+## Writing a Task File
 
-Task files live in `.github/issues/`. Follow this structure:
+Create a Markdown file anywhere in the repository with the following structure:
 
 ```markdown
 # [IaC] Create int_<module> Terraform Module
@@ -78,39 +81,39 @@ Task files live in `.github/issues/`. Follow this structure:
 
 ---
 
-## Example: Creating the int_common Issue
+## Using the Workflow with a Task File
 
-The ready-to-use task file is at `.github/issues/int_common-terraform-module.md`.
+Once you've written a task file, run the workflow:
 
-**Run the workflow:**
+**Via GitHub Actions UI:**
 
 ```
-
 Actions → Create & Assign Issue to Copilot
-issue_file: int_common-terraform-module.md
+issue_file: path/to/your-task.md
 ```
 
 **Or via CLI (if `gh` is authenticated):**
 
 ```bash
-
 gh workflow run assign-to-copilot.yml \
-  -f issue_file=int_common-terraform-module.md
+  -f issue_file=path/to/your-task.md
 ```
 
 ---
 
-## Repository Layout for Issues
+## Repository Layout (issue-related files)
 
 ```
 .github/
-├── issues/                          # Task description files (source of truth)
-│   ├── int_common-terraform-module.md
-│   └── template/
-│       └── terraform-module.md      # GitHub issue template (UI creation)
+├── ISSUE_TEMPLATE/              # GitHub-discoverable issue templates (UI creation)
+│   └── terraform-module.md
+├── docs/
+│   └── assign-to-cloud-agent.md
 └── workflows/
-    └── assign-to-copilot.yml        # Workflow: create + assign to Copilot
+    └── assign-to-copilot.yml    # Workflow: create + assign to Copilot
 ```
+
+> Task files used with the workflow can live anywhere in the repository — the workflow accepts any repository-relative path.
 
 ---
 
