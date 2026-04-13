@@ -26,8 +26,8 @@ applyTo: "**/*.tf"
 - Use Azure RBAC roles and Managed Identities to control access to resources.
   - Follow the principle of least privilege when assigning permissions.
   - Prefer User-Assigned Managed Identities over service principal credentials where possible.
-- Use Azure Network Security Groups (NSGs) and VNet service endpoints or Private Endpoints to control network access to resources.
-- Deploy resources in private subnets/VNets whenever possible.
+- Use Azure Network Security Groups (NSGs) and Private Endpoints to control network access to resources.
+- Deploy resources in private subnets/VNets by default.
   - Use public-facing resources (e.g., Application Gateway, API Management) only for components that require direct internet access.
 - Use encryption for sensitive data at rest and in transit.
   - Enable encryption for Azure Storage accounts, Azure Disks, and Azure SQL databases.
