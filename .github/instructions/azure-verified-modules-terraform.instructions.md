@@ -47,14 +47,14 @@ More details on the AVM process can be found in the [Azure Verified Modules Cont
 1. Copy the example code from the module documentation
 2. Replace `source = "../../"` with `source = "Azure/avm-res-{service}-{resource}/azurerm"`
 3. Add `version = "~> 1.0"` (use latest available)
-4. Set `enable_telemetry = true`
+4. Set `enable_telemetry = false`
 
 ### From Scratch
 
 1. Copy the Provision Instructions from module documentation
 2. Configure required and optional inputs
 3. Pin the module version
-4. Enable telemetry
+4. Disable telemetry
 
 ### Example Usage
 
@@ -63,7 +63,7 @@ module "storage_account" {
   source  = "Azure/avm-res-storage-storageaccount/azurerm"
   version = "~> 0.1"
 
-  enable_telemetry    = true
+  enable_telemetry    = false
   location            = "East US"
   name                = "mystorageaccount"
   resource_group_name = "my-rg"
@@ -122,7 +122,7 @@ module "storage_account" {
 - ✅ **Always** pin module and provider versions
 - ✅ **Start** with official examples from module documentation
 - ✅ **Review** all inputs and outputs before implementation
-- ✅ **Enable** telemetry: `enable_telemetry = true`
+- ✅ **Disable** telemetry: `enable_telemetry = false`
 - ✅ **Use** AVM utility modules for common patterns
 - ✅ **Follow** AzureRM provider requirements and constraints
 
@@ -177,7 +177,7 @@ module "resource_group" {
   source  = "Azure/avm-res-resources-resourcegroup/azurerm"
   version = "~> 0.1"
 
-  enable_telemetry = true
+  enable_telemetry = false
   location         = var.location
   name            = var.resource_group_name
 }
@@ -190,7 +190,7 @@ module "virtual_network" {
   source  = "Azure/avm-res-network-virtualnetwork/azurerm"
   version = "~> 0.1"
 
-  enable_telemetry    = true
+  enable_telemetry    = false
   location            = module.resource_group.location
   name                = var.vnet_name
   resource_group_name = module.resource_group.name
@@ -218,7 +218,7 @@ module "virtual_network" {
 Before submitting any AVM-related code:
 
 - [ ] Module version is pinned
-- [ ] Telemetry is enabled
+- [ ] Telemetry is disabled (`enable_telemetry = false`)
 - [ ] Code is formatted (`terraform fmt`)
 - [ ] Code is validated (`terraform validate`)
 - [ ] AVM pre-commit checks pass (`./avm pre-commit`)

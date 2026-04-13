@@ -105,15 +105,17 @@ gh workflow run assign-to-copilot.yml \
 
 ```
 .github/
-├── ISSUE_TEMPLATE/              # GitHub-discoverable issue templates (UI creation)
-│   └── terraform-module.md
-├── docs/
-│   └── assign-to-cloud-agent.md
+├── ISSUE_TEMPLATE/                  # GitHub issue templates (shown in "New issue" UI)
+│   └── terraform-module.md          # Template for Terraform module requests
+├── issues/                          # Copilot task description files (source of truth)
+│   └── int_common-terraform-module.md
 └── workflows/
     └── assign-to-copilot.yml    # Workflow: create + assign to Copilot
 ```
 
-> Task files used with the workflow can live anywhere in the repository — the workflow accepts any repository-relative path.
+> **Note:** GitHub's "New issue" UI only discovers templates placed in `.github/ISSUE_TEMPLATE/`.
+> The `.github/issues/` directory is used exclusively for Copilot task description files that are
+> submitted via the **Create & Assign Issue to Copilot** workflow — these are **not** GitHub issue templates.
 
 ---
 
