@@ -14,22 +14,23 @@ applyTo: "**/*.tf"
 
 - Always use the latest stable version of Terraform and its providers.
   - Regularly update your Terraform configurations to incorporate security patches and improvements.
-- Store sensitive information in a secure manner, such as using AWS Secrets Manager or SSM Parameter Store.
+- Store sensitive information in a secure manner, such as using Azure Key Vault for secrets and certificates.
   - Regularly rotate credentials and secrets.
   - Automate the rotation of secrets, where possible.
-- Use AWS environment variables to reference values stored in AWS Secrets Manager or SSM Parameter Store.
-  - This keeps sensitive values out of your Terraform state files.
-- Never commit sensitive information such as AWS credentials, API keys, passwords, certificates, or Terraform state to version control.
+- Use environment variables or CI/CD pipeline secrets to pass sensitive values to Terraform at runtime.
+  - This keeps sensitive values out of your Terraform state files and source code.
+- Never commit sensitive information such as credentials, API keys, passwords, certificates, or Terraform state to version control.
   - Use `.gitignore` to exclude files containing sensitive information from version control.
 - Always mark sensitive variables as `sensitive = true` in your Terraform configurations.
   - This prevents sensitive values from being displayed in the Terraform plan or apply output.
-- Use IAM roles and policies to control access to resources.
+- Use Azure RBAC roles and Managed Identities to control access to resources.
   - Follow the principle of least privilege when assigning permissions.
-- Use security groups and network ACLs to control network access to resources.
-- Deploy resources in private subnets whenever possible.
-  - Use public subnets only for resources that require direct internet access, such as load balancers or NAT gateways.
+  - Prefer User-Assigned Managed Identities over service principal credentials where possible.
+- Use Azure Network Security Groups (NSGs) and VNet service endpoints or Private Endpoints to control network access to resources.
+- Deploy resources in private subnets/VNets whenever possible.
+  - Use public-facing resources (e.g., Application Gateway, API Management) only for components that require direct internet access.
 - Use encryption for sensitive data at rest and in transit.
-  - Enable encryption for EBS volumes, S3 buckets, and RDS instances.
+  - Enable encryption for Azure Storage accounts, Azure Disks, and Azure SQL databases.
   - Use TLS for communication between services.
 - Regularly review and audit your Terraform configurations for security vulnerabilities.
   - Use tools like `trivy`, `tfsec`, or `checkov` to scan your Terraform configurations for security issues.
