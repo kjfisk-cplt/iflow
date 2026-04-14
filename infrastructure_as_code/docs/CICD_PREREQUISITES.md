@@ -369,13 +369,20 @@ jobs:
       - name: Terraform Plan
         working-directory: ${{ matrix.module }}
         run: |
-          terraform plan -var-file="terraform.tfvars" -out=tfplan -no-color > plan.txt 2>&1
+          terraform plan \
+            -var="subscription_id=${{ secrets.AZURE_SUBSCRIPTION_ID }}" \
+            -var="workload=iflow" \
+            -var="env=${{ steps.metadata.outputs.env }}" \
+            -out=tfplan \
+            -no-color > plan.txt 2>&1
           cat plan.txt
         env:
           ARM_USE_OIDC: true
           ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
           ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
           ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+          TF_VAR_tfstate_resource_group_name: rg-tfstate-iflow-${{ steps.metadata.outputs.env }}
+          TF_VAR_tfstate_storage_account_name: stotfstateiflow${{ steps.metadata.outputs.env }}
       
       - name: Comment Plan on PR
         uses: actions/github-script@v7
@@ -487,12 +494,19 @@ jobs:
       
       - name: Terraform Plan
         working-directory: ${{ steps.path.outputs.module_path }}
-        run: terraform plan -var-file="terraform.tfvars" -out=tfplan
+        run: |
+          terraform plan \
+            -var="subscription_id=${{ secrets.AZURE_SUBSCRIPTION_ID }}" \
+            -var="workload=iflow" \
+            -var="env=${{ inputs.environment || 'dev' }}" \
+            -out=tfplan
         env:
           ARM_USE_OIDC: true
           ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
           ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
           ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+          TF_VAR_tfstate_resource_group_name: rg-tfstate-iflow-${{ inputs.environment || 'dev' }}
+          TF_VAR_tfstate_storage_account_name: stotfstateiflow${{ inputs.environment || 'dev' }}
       
       - name: Terraform Apply
         working-directory: ${{ steps.path.outputs.module_path }}
