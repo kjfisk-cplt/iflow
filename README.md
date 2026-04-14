@@ -105,12 +105,16 @@ iflow/
 ├── infrastructure_as_code/       # Terraform IaC
 │   ├── environments/             # Environment-specific configurations
 │   │   ├── dev/                  # Development environment
+│   │   │   ├── _shared/          # Shared modules (naming, utilities)
 │   │   │   ├── int_network/      # Network module stack
 │   │   │   ├── int_monitoring/   # Monitoring module stack
 │   │   │   └── ...               # Other domain modules
 │   │   ├── test/                 # Test environment
-│   │   ├── prod/                 # Production environment
-│   │   └── _shared/              # Shared modules (naming, utilities)
+│   │   │   ├── _shared/          # Shared modules (naming, utilities)
+│   │   │   └── ...               # Environment module stacks
+│   │   └── prod/                 # Production environment
+│   │       ├── _shared/          # Shared modules (naming, utilities)
+│   │       └── ...               # Environment module stacks
 │   ├── scripts/                  # PowerShell automation scripts
 │   └── docs/                     # IaC operational guides
 └── iflow.code-workspace          # VS Code workspace settings
@@ -309,14 +313,24 @@ terraform {
       version = "~> 4.0"
     }
     azapi = {
+      # Required by Azure Verified Modules (AVM)
       source  = "Azure/azapi"
       version = "~> 2.4"
+    }
+    modtm = {
+      # Required by AVM modules for telemetry management
+      source  = "azure/modtm"
+      version = "~> 0.3"
+    }
+    random = {
+      source  = "hashicorp/random"
+      version = "~> 3.5"
     }
   }
 }
 ```
 
-**Note**: `azapi` provider is required for Azure Verified Modules.
+**Note**: `azapi` and `modtm` providers are required by Azure Verified Modules. Always set `enable_telemetry = false` on AVM modules.
 
 ## 🧪 Testing
 
@@ -358,7 +372,7 @@ terraform apply tfplan
 ### GitHub Copilot Instructions
 
 Domain-specific guidance for AI assistants:
-- **[.github/instructions/terraform-conventions.instructions.md](.github/instructions/terraform-conventions.instructions.md)** - Terraform best practices
+- **[.github/instructions/terraform.instructions.md](.github/instructions/terraform.instructions.md)** - Terraform best practices
 - **[.github/instructions/terraform-azure.instructions.md](.github/instructions/terraform-azure.instructions.md)** - Azure-specific patterns
 - **[.github/instructions/azure-verified-modules-terraform.instructions.md](.github/instructions/azure-verified-modules-terraform.instructions.md)** - AVM usage guidelines
 
