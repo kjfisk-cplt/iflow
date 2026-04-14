@@ -114,8 +114,9 @@ jobs:
         working-directory: ${{ matrix.module }}
         run: |
           terraform plan \
-            -var-file="terraform.tfvars" \
             -var="subscription_id=${{ secrets.AZURE_SUBSCRIPTION_ID }}" \
+            -var="workload=iflow" \
+            -var="env=${{ steps.metadata.outputs.env }}" \
             -out=tfplan \
             -no-color 2>&1 | tee plan-output.txt
           
@@ -126,6 +127,8 @@ jobs:
           ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
           ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
           ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+          TF_VAR_tfstate_resource_group_name: rg-tfstate-iflow-${{ steps.metadata.outputs.env }}
+          TF_VAR_tfstate_storage_account_name: stotfstateiflow${{ steps.metadata.outputs.env }}
         continue-on-error: true
       
       - name: Generate plan summary

@@ -34,7 +34,7 @@ variable "vnet_address_space" {
 variable "subnets" {
   description = "Map of subnet configurations to create inside the virtual network."
   type = map(object({
-    address_prefixes = list(string)
+    address_prefixes                              = list(string)
     private_endpoint_network_policies             = optional(string, "Disabled")
     private_link_service_network_policies_enabled = optional(bool, false)
     service_endpoints = optional(list(object({
@@ -51,7 +51,7 @@ variable "subnets" {
 
   default = {
     "snet-private-endpoints" = {
-      address_prefixes = ["10.0.0.0/24"]
+      address_prefixes                  = ["10.0.0.0/24"]
       private_endpoint_network_policies = "Disabled"
     }
     "snet-integration" = {
@@ -95,22 +95,4 @@ variable "pep_monitoring_subnet_key" {
   description = "Key of the subnet (from the subnets map) to attach the monitoring private endpoint."
   type        = string
   default     = "snet-private-endpoints"
-}
-
-# ── Terraform State Backend ───────────────────────────────────────────────────
-
-variable "tfstate_resource_group_name" {
-  description = "Resource group that contains the Terraform state storage account."
-  type        = string
-}
-
-variable "tfstate_storage_account_name" {
-  description = "Storage account name used for Terraform remote state."
-  type        = string
-}
-
-variable "tfstate_container_name" {
-  description = "Blob container name for Terraform state files."
-  type        = string
-  default     = "tfstate"
 }
