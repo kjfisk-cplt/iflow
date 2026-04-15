@@ -22,7 +22,7 @@
 - **Network** (`int_network`) — VNet, NSG, 15 Private DNS zones, Private Link Scope ✅ Implemented
 - **Monitoring** (`int_monitoring`) — Log Analytics, Application Insights, Action Groups ✅ Implemented
 - **Common** (`int_common`) — Shared Managed Identity, App Service Plans ✅ Implemented
-- **KeyVault** (`int_keyvault`) — Centralized secrets with Private Endpoints
+- **KeyVault** (`int_keyvault`) — Centralized secrets with Private Endpoints ✅ Implemented
 - **Messaging** (`int_messaging`) — Event Hub, Service Bus for event-driven flows
 - **Storage** (`int_storage`) — Blob, Queue, Table storage
 - **Database** (`int_database`) — Azure SQL
@@ -197,6 +197,6 @@ When completing any task:
 ## Known Issues
 
 - **Typo**: `_shared/vaiables.tf` should be `variables.tf`
-- **Incomplete modules**: Only `int_network` is implemented; 10 other modules are scaffolded but empty
+- **Incomplete modules**: `int_network`, `int_monitoring`, `int_common`, `int_keyvault` are implemented; remaining modules are scaffolded but empty
 - **No deployment docs**: No README or automation scripts for Terraform workflow
 - **No build/test for app**: Application layer not yet started

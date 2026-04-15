@@ -1,0 +1,25 @@
+# Copy this file to terraform.tfvars and fill in your values.
+# terraform.tfvars is git-ignored and should never be committed.
+#
+# Run: terraform init -backend-config="../backend.conf" -backend-config="key=int_keyvault.tfstate"
+# Then: terraform plan -var-file="terraform.tfvars"
+
+subscription_id = "00000000-0000-0000-0000-000000000000"  # Your Azure subscription ID
+workload        = "iflow"
+env             = "dev"
+location        = "swedencentral"
+
+# Terraform state backend — must match your backend.conf
+tfstate_resource_group_name  = "rg-tfstate"
+tfstate_storage_account_name = "stoterraformstate"
+tfstate_container_name       = "tfstate"
+
+# Key Vault configuration
+kv_sku                     = "standard"
+soft_delete_retention_days = 30
+
+# Set to true for production environments to prevent accidental purge of secrets.
+purge_protection_enabled = false
+
+# Subnet key from int_network subnets map for the private endpoint
+pep_subnet_key = "snet-private-endpoints"
