@@ -34,7 +34,7 @@ output "workflow_runtime_logs_eventhub_name" {
 
 output "workflow_runtime_logs_consumer_group_id" {
   description = "Resource ID of the workflow runtime logs consumer group."
-  value       = azurerm_eventhub_consumer_group.workflowlogs.id
+  value       = azurerm_eventhub_consumer_group.workflow_runtime_logs.id
 }
 
 # ── Service Bus ────────────────────────────────────────────────────────────────

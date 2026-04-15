@@ -43,7 +43,7 @@ IFlow follows a **modular domain-based architecture** where each integration dom
 |--------|---------|--------|
 | `int_network` | VNet, NSG, 15 Private DNS zones, Private Link Scope | ✅ Implemented |
 | `int_monitoring` | Log Analytics, Application Insights, Action Groups | ✅ Implemented |
-| `int_common` | Shared Managed Identity, App Service Plans | 📋 Planned |
+| `int_common` | Shared Managed Identity, App Service Plans | ✅ Implemented |
 | `int_keyvault` | Centralized secrets with Private Endpoints | 📋 Planned |
 | `int_messaging` | Event Hub, Service Bus for event-driven flows | ✅ Implemented |
 | `int_storage` | Blob, Queue, Table storage | 📋 Planned |
@@ -217,8 +217,7 @@ terraform apply -var-file="terraform.tfvars"
 ```powershell
 cd ../int_messaging
 
-# Create terraform.tfvars
-# Initialize and apply same as previous modules
+# Copy terraform.tfvars.example to terraform.tfvars and configure your values
 
 terraform init `
   -backend-config="../backend.conf" `

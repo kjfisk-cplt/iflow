@@ -49,9 +49,8 @@ resource "azurerm_eventhub_namespace" "messaging" {
 
   minimum_tls_version           = "1.2"
   public_network_access_enabled = false
-  local_authentication_enabled  = true
+  local_authentication_enabled  = false
   auto_inflate_enabled          = false
-  maximum_throughput_units      = var.eventhub_namespace_capacity
 }
 
 resource "azurerm_eventhub" "workflow_runtime_logs" {
@@ -61,7 +60,7 @@ resource "azurerm_eventhub" "workflow_runtime_logs" {
   message_retention = var.workflow_runtime_logs_message_retention
 }
 
-resource "azurerm_eventhub_consumer_group" "workflowlogs" {
+resource "azurerm_eventhub_consumer_group" "workflow_runtime_logs" {
   name                = var.workflow_runtime_logs_consumer_group_name
   namespace_name      = azurerm_eventhub_namespace.messaging.name
   eventhub_name       = azurerm_eventhub.workflow_runtime_logs.name
@@ -79,7 +78,7 @@ resource "azurerm_servicebus_namespace" "logging" {
 
   minimum_tls_version           = "1.2"
   public_network_access_enabled = false
-  local_auth_enabled            = true
+  local_auth_enabled            = false
 }
 
 resource "azurerm_servicebus_namespace" "messagebroker" {
@@ -91,7 +90,7 @@ resource "azurerm_servicebus_namespace" "messagebroker" {
 
   minimum_tls_version           = "1.2"
   public_network_access_enabled = false
-  local_auth_enabled            = true
+  local_auth_enabled            = false
 }
 
 # ── Logging Queues ─────────────────────────────────────────────────────────────
@@ -147,14 +146,14 @@ resource "azurerm_servicebus_subscription_rule" "messagebroker" {
 resource "azurerm_private_endpoint" "messaging" {
   for_each = local.private_endpoints
 
-  name                = "pep-${each.value.name_suffix}-${var.workload}-${var.env}"
+  name                = each.value.endpoint_name
   location            = var.location
   resource_group_name = azurerm_resource_group.messaging.name
   subnet_id           = data.terraform_remote_state.network.outputs.subnet_ids[var.pep_subnet_key]
   tags                = local.tags
 
   private_service_connection {
-    name                           = "psc-${each.value.name_suffix}-${var.workload}-${var.env}"
+    name                           = each.value.connection_name
     private_connection_resource_id = each.value.resource_id
     is_manual_connection           = false
     subresource_names              = each.value.subresource_names
@@ -163,7 +162,7 @@ resource "azurerm_private_endpoint" "messaging" {
   private_dns_zone_group {
     name = "default"
     private_dns_zone_ids = [
-      data.terraform_remote_state.network.outputs.private_dns_zone_ids["privatelink.servicebus.windows.net"]
+      data.terraform_remote_state.network.outputs.private_dns_zone_ids[each.value.dns_zone_key]
     ]
   }
 }

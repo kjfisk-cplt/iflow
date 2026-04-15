@@ -69,7 +69,7 @@ variable "servicebus_sku" {
 }
 
 variable "logging_queues" {
-  description = "Tracking queues created in the logging Service Bus namespace."
+  description = "Logging and tracking queues created in the logging Service Bus namespace."
   type = map(object({
     default_message_ttl                     = optional(string, "P14D")
     duplicate_detection_history_time_window = optional(string, "PT10M")
@@ -132,7 +132,7 @@ variable "messagebroker_subscriptions" {
     }
     "EventNotification-Demo-HR-Employee" = {
       topic_name = "EventNotification"
-      sql_filter = "objectType='Employee' AND sendingSystem='HRDemo'"
+      sql_filter = "ObjectType='Employee' AND sendingSystem='HRDemo'"
     }
     "EventNotification-Unknown" = {
       topic_name = "EventNotification"
