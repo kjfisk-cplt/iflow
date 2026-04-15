@@ -3,7 +3,6 @@
 
 	// List of extensions which should be recommended for users of this workspace.
 	"recommendations": [
-        "github.copilot",
         "github.copilot-chat",
         "hashicorp.terraform",
         "ms-azuretools.vscode-azureterraform",
