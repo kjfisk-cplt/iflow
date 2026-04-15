@@ -1,0 +1,24 @@
+# Copy this file to terraform.tfvars and fill in your values.
+# terraform.tfvars is git-ignored and should never be committed.
+#
+# Run: terraform init -backend-config="../backend.conf" -backend-config="key=int_common.tfstate"
+# Then: terraform plan -var-file="terraform.tfvars"
+
+subscription_id = "00000000-0000-0000-0000-000000000000"  # Your Azure subscription ID
+workload        = "iflow"
+env             = "dev"
+location        = "swedencentral"
+
+# App Service Plan SKUs
+# Elastic Premium (EP1/EP2/EP3) for Logic Apps Standard and Azure Functions
+asp_logic_sku     = "EP1"
+asp_functions_sku = "EP1"
+
+# Standard (S1/S2/S3) or Premium v3 (P1v3/P2v3/P3v3) for Web Applications
+asp_web_sku = "S1"
+
+# RBAC: subscription-scope role assignment for the UAI
+# Set enable_uai_subscription_role_assignment = true to create the assignment.
+# Requires the deployment principal to have Owner or User Access Administrator rights.
+enable_uai_subscription_role_assignment = false
+uai_subscription_role                   = "Contributor"

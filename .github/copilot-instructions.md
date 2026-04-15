@@ -20,8 +20,8 @@
 **Integration Platform Components** (domain modules):
 
 - **Network** (`int_network`) — VNet, NSG, 15 Private DNS zones, Private Link Scope ✅ Implemented
-- **Monitoring** (`int_monitoring`) — Log Analytics, Application Insights, Action Groups
-- **Common** (`int_common`) — Shared Managed Identity, App Service Plans
+- **Monitoring** (`int_monitoring`) — Log Analytics, Application Insights, Action Groups ✅ Implemented
+- **Common** (`int_common`) — Shared Managed Identity, App Service Plans ✅ Implemented
 - **KeyVault** (`int_keyvault`) — Centralized secrets with Private Endpoints
 - **Messaging** (`int_messaging`) — Event Hub, Service Bus for event-driven flows
 - **Storage** (`int_storage`) — Blob, Queue, Table storage
