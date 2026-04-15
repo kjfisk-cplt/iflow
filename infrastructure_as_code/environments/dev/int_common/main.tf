@@ -67,20 +67,20 @@ module "asp_functions" {
 
 # ── App Service Plan: Web Applications ───────────────────────────────────────
 
-module "asp_web" {
-  source  = "Azure/avm-res-web-serverfarm/azurerm"
-  version = "~> 0.4"
+# module "asp_web" {
+#   source  = "Azure/avm-res-web-serverfarm/azurerm"
+#   version = "~> 0.4"
 
-  name                = module.naming.asp_web_name
-  location            = var.location
-  resource_group_name = azurerm_resource_group.common.name
-  tags                = local.tags
+#   name                = module.naming.asp_web_name
+#   location            = var.location
+#   resource_group_name = azurerm_resource_group.common.name
+#   tags                = local.tags
 
-  os_type  = "Windows"
-  sku_name = var.asp_web_sku
+#   os_type  = "Windows"
+#   sku_name = var.asp_web_sku
 
-  enable_telemetry = false
-}
+#   enable_telemetry = false
+# }
 
 # ── RBAC: UAI Subscription-Scope Role ────────────────────────────────────────
 # Assigns the UAI a role at subscription scope for cross-resource access.
