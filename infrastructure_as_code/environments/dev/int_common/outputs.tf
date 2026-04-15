@@ -54,12 +54,12 @@ output "asp_functions_name" {
   value       = module.asp_functions.resource.name
 }
 
-output "asp_web_id" {
-  description = "Resource ID of the Web Applications App Service Plan."
-  value       = module.asp_web.resource_id
-}
+# output "asp_web_id" {
+#   description = "Resource ID of the Web Applications App Service Plan."
+#   value       = module.asp_web.resource_id
+# }
 
-output "asp_web_name" {
-  description = "Name of the Web Applications App Service Plan."
-  value       = module.asp_web.resource.name
-}
+# output "asp_web_name" {
+#   description = "Name of the Web Applications App Service Plan."
+#   value       = module.asp_web.resource.name
+# }
