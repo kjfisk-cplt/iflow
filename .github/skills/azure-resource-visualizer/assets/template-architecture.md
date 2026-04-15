@@ -25,15 +25,19 @@
 ## Relationship Details
 
 ### Network Architecture
+
 [Describe VNets, subnets, network security]
 
 ### Data Flow
+
 [Describe how data moves between components]
 
 ### Identity & Access
+
 [Describe managed identities, key vault access, RBAC]
 
 ### Dependencies
+
 [Describe critical dependencies and their order]
 
 ## Notes & Recommendations

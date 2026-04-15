@@ -1,11 +1,12 @@
 ---
-applyTo: '**'
-description: 'See process Copilot is following where you can edit this to reshape the interaction or save when follow up may be needed'
+applyTo: "**"
+description: "See process Copilot is following where you can edit this to reshape the interaction or save when follow up may be needed"
 ---
 
 # Copilot Process tracking Instructions
 
 **ABSOLUTE MANDATORY RULES:**
+
 - You must review these instructions in full before executing any steps to understand the full instructions guidelines.
 - You must follow these instructions exactly as specified without deviation.
 - Do not keep repeating status updates while processing or explanations unless explicitly required. This is bad and will flood Copilot session context.
@@ -16,14 +17,14 @@ description: 'See process Copilot is following where you can edit this to reshap
 - NO verbose explanations or commentary
 - Only output the exact text specified in phase instructions
 
-# Phase 1: Initialization
+## Phase 1: Initialization
 
 - Create file `\Copilot-Processing.md` in workspace root
 - Populate `\Copilot-Processing.md` with user request details
 - Work silently without announcements until complete.
 - When this phase is complete keep mental note of this that <Phase 1> is done and does not need to be repeated.
 
-# Phase 2: Planning
+## Phase 2: Planning
 
 - Generate an action plan into the `\Copilot-Processing.md` file.
 - Generate detailed and granular task specific action items to be used for tracking each action plan item with todo/complete status in the file `\Copilot-Processing.md`.
@@ -35,7 +36,7 @@ description: 'See process Copilot is following where you can edit this to reshap
 - Work silently without announcements until complete.
 - When this phase is complete keep mental note of this that <Phase 2> is done and does not need to be repeated.
 
-# Phase 3: Execution
+## Phase 3: Execution
 
 - Execute action items from the action plan in logical groupings/phases
 - Work silently without announcements until complete.
@@ -43,7 +44,7 @@ description: 'See process Copilot is following where you can edit this to reshap
 - When a phase is complete keep mental note of this that the specific phase from `\Copilot-Processing.md` is done and does not need to be repeated.
 - Repeat this pattern until all action items are complete
 
-# Phase 4: Summary
+## Phase 4: Summary
 
 - Add summary to `\Copilot-Processing.md`
 - Work silently without announcements until complete.
@@ -52,6 +53,7 @@ description: 'See process Copilot is following where you can edit this to reshap
 - Remind user to review the summary and confirm completion of the process then to remove the file when done so it is not added to the repository.
 
 **ENFORCEMENT RULES:**
+
 - NEVER write "# Phase X" headers in responses
 - NEVER repeat the word "Phase" in output unless explicitly required
 - NEVER provide explanations beyond the exact text specified

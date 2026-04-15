@@ -116,6 +116,7 @@ groups:
 This creates one PR per dependency across all specified directories, reducing CI costs and review burden.
 
 Limitations:
+
 - All directories must use the same package ecosystem
 - Applies to version updates only
 - Incompatible version constraints create separate PRs
@@ -162,6 +163,7 @@ groups:
 ```
 
 Key behaviors:
+
 - Dependencies matching multiple groups go to the **first** match
 - `applies-to` defaults to `version-updates` when absent
 - Ungrouped dependencies get individual PRs
@@ -317,6 +319,7 @@ Interact with Dependabot PRs using `@dependabot` comments.
 | `@dependabot ignore this patch version` | Ignore this patch version |
 
 For grouped PRs, additional commands:
+
 - `@dependabot ignore DEPENDENCY_NAME` — ignore specific dependency in group
 - `@dependabot unignore DEPENDENCY_NAME` — clear ignores, reopen with updates
 - `@dependabot unignore *` — clear all ignores for all dependencies in group

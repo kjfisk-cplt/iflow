@@ -99,6 +99,7 @@ Display analysis results in structured table comparing awesome-copilot custom ag
 ## Update Handling
 
 When outdated agents are identified:
+
 1. Include them in the output table with ⚠️ status
 2. Document specific differences in the "Suggestion Rationale" column
 3. Provide recommendation to update with key changes noted
