@@ -19,10 +19,10 @@ output "keyvault_id" {
 
 output "keyvault_name" {
   description = "Name of the Key Vault."
-  value       = module.keyvault.resource.name
+  value       = module.keyvault.name
 }
 
 output "keyvault_uri" {
   description = "Vault URI of the Key Vault (e.g. https://<name>.vault.azure.net/). Used for secret references in app configuration."
-  value       = module.keyvault.resource.vault_uri
+  value       = module.keyvault.uri
 }
