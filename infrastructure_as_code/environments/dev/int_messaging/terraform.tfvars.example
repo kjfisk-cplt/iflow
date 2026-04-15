@@ -1,0 +1,20 @@
+# Copy this file to terraform.tfvars and fill in your values.
+# terraform.tfvars is git-ignored and should never be committed.
+#
+# Run: terraform init -backend-config="../backend.conf" -backend-config="key=int_messaging.tfstate"
+# Then: terraform plan -var-file="terraform.tfvars"
+
+subscription_id = "00000000-0000-0000-0000-000000000000"  # Your Azure subscription ID
+workload        = "iflow"
+env             = "dev"
+location        = "swedencentral"
+
+# Terraform state backend — must match your backend.conf
+tfstate_resource_group_name  = "rg-tfstate"
+tfstate_storage_account_name = "stoterraformstate"
+tfstate_container_name       = "tfstate"
+
+# Optional overrides
+pep_subnet_key                            = "snet-private-endpoints"
+workflow_runtime_logs_eventhub_name       = "workflowruntimelogs"
+workflow_runtime_logs_consumer_group_name = "workflowlogs"

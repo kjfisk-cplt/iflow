@@ -45,7 +45,7 @@ IFlow follows a **modular domain-based architecture** where each integration dom
 | `int_monitoring` | Log Analytics, Application Insights, Action Groups | ✅ Implemented |
 | `int_common` | Shared Managed Identity, App Service Plans | 📋 Planned |
 | `int_keyvault` | Centralized secrets with Private Endpoints | 📋 Planned |
-| `int_messaging` | Event Hub, Service Bus for event-driven flows | 📋 Planned |
+| `int_messaging` | Event Hub, Service Bus for event-driven flows | ✅ Implemented |
 | `int_storage` | Blob, Queue, Table storage | 📋 Planned |
 | `int_database` | Azure SQL | 📋 Planned |
 | `int_apim` | API Management as integration gateway | 📋 Planned |
@@ -207,6 +207,22 @@ cd ../int_monitoring
 terraform init `
   -backend-config="../backend.conf" `
   -backend-config="key=int_monitoring.tfstate"
+
+terraform plan -var-file="terraform.tfvars"
+terraform apply -var-file="terraform.tfvars"
+```
+
+#### 5. Deploy Messaging Module
+
+```powershell
+cd ../int_messaging
+
+# Create terraform.tfvars
+# Initialize and apply same as previous modules
+
+terraform init `
+  -backend-config="../backend.conf" `
+  -backend-config="key=int_messaging.tfstate"
 
 terraform plan -var-file="terraform.tfvars"
 terraform apply -var-file="terraform.tfvars"
@@ -432,7 +448,7 @@ When making changes, check if these documents need updates:
 - 📋 Key Vault with private endpoints
 
 ### Phase 2: Platform Services
-- 📋 Messaging infrastructure (Service Bus, Event Hub)
+- ✅ Messaging infrastructure (Service Bus, Event Hub)
 - 📋 Storage services (Blob, Queue, Table)
 - 📋 Database services (Azure SQL)
 - 📋 API Management gateway
