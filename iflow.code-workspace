@@ -34,5 +34,10 @@
 			"MD049": false,
 			"MD060": false
 		}
+	},
+	"extensions": {
+		"recommendations": [
+			"ms-azuretools.vscode-azure-github-copilot"
+		]
 	}
 }
