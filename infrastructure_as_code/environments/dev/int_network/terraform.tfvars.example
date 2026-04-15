@@ -33,7 +33,3 @@ subnets = {
 
 pep_monitoring_subnet_key = "snet-private-endpoints"
 
-# Terraform state backend — must match your backend.conf
-tfstate_resource_group_name  = "rg-tfstate"
-tfstate_storage_account_name = "stoterraformstate"
-tfstate_container_name       = "tfstate"
