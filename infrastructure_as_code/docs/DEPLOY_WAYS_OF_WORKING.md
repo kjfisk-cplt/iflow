@@ -340,12 +340,15 @@ If you need to deploy outside the normal PR flow (e.g., an urgent hotfix):
 **Cause:** The push to `main` did not include any `*.tf` or `*.tfvars` files inside `infrastructure_as_code/environments/`. This can happen when only documentation or workflow files were changed in the same push.
 
 **Solutions:**
+
 - Check that the path filter in `terraform-apply.yml` is correct:
+
   ```yaml
   paths:
     - 'infrastructure_as_code/environments/**/*.tf'
     - 'infrastructure_as_code/environments/**/*.tfvars'
   ```
+
 - If you need to force-deploy without a Terraform file change, use **manual workflow dispatch** (see [Section 7](#7-emergency-manual-deploy-break-glass)).
 
 ---
@@ -363,6 +366,7 @@ If you need to deploy outside the normal PR flow (e.g., an urgent hotfix):
 **Cause:** The auto-detected module path does not exist as a directory. This can happen if a Terraform file was deleted or renamed, or if the path detection grabbed a partial match.
 
 **Solutions:**
+
 - Check that the module directory exists: `ls infrastructure_as_code/environments/dev/int_<module>`
 - Use manual workflow dispatch and provide the exact module name.
 
@@ -373,6 +377,7 @@ If you need to deploy outside the normal PR flow (e.g., an urgent hotfix):
 **Cause:** A new developer ran `terraform init` locally without a `backend.conf`, writing a local state backend. The next `terraform init -backend-config=...` fails.
 
 **Fix:**
+
 ```bash
 terraform init -migrate-state \
   -backend-config="../backend.conf" \
@@ -388,6 +393,7 @@ See [TERRAFORM_STATE_SETUP.md](TERRAFORM_STATE_SETUP.md) for the full backend se
 **Cause:** The GitHub Actions OIDC trust policy is not configured correctly, or the service principal does not have sufficient permissions in Azure.
 
 **Check:**
+
 1. Verify repository secrets exist: `AZURE_CLIENT_ID`, `AZURE_TENANT_ID`, `AZURE_SUBSCRIPTION_ID`.
 2. Check the federated identity credential in Azure AD App Registration — the subject must match `repo:kjfisk-cplt/iflow:environment:dev`.
 3. Verify the service principal has the `Contributor` role (or appropriate least-privilege role) on the subscription.

@@ -3,6 +3,7 @@
 IFlow är en integrationsplattform byggd för att stödja robusta, skalbara och säkra integrationsflöden mellan interna och externa system. Arkitekturen är uppdelad i tydliga domänmoduler som kan utvecklas, deployas och förvaltas oberoende, samtidigt som de samverkar genom gemensamma plattformstjänster för nätverk, identitet, meddelandehantering, observabilitet och datalagring.
 
 Lösningen är utformad enligt etablerade best practice-principer för modern molnarkitektur:
+
 - **Security by design** med stark identitetsstyrning, least privilege och centraliserad hemlighetshantering.
 - **Zero Trust** där trafik, identitet och åtkomst verifieras explicit och resurser isoleras via privata nätverksgränssnitt.
 - **Modulär och event-driven design** för låg koppling, hög förändringstakt och återanvändbara integrationsmönster.
@@ -36,6 +37,7 @@ Publicera dokumentationen med följande upplägg:
 **IFlow** är en Azure-baserad integrationsplattform uppbyggd som en modulär, event-driven arkitektur. Den hanterar affärsintegrationer via API Management som gateway, Logic Apps Standard för orkestrering och Azure Functions (.NET Isolated) för teknisk processering och tracking.
 
 Plattformen är säkerhetsmässigt funderad på:
+
 - **Zero-trust nätverk** – alla resurser kommunicerar via Private Endpoints inuti ett VNet.
 - **Managed Identity** – ingen connection string lagras i kod; all autentisering sker via RBAC.
 - **Azure Key Vault** – samtliga hemligheter centraliserade med auditlogg.
@@ -189,6 +191,7 @@ Samtliga 15 Private Link DNS-zoner skapas i VNetet för att säkerställa att DN
 ### Access Control
 
 Vid deployment tilldelas User Assigned Managed Identity RBAC-roller på:
+
 - Event Hub Namespace (send/receive)
 - Logging Service Bus (send/receive)
 - Message Broker Service Bus (send/receive)
@@ -945,7 +948,7 @@ Hanterar enstaka uppskjutna meddelanden.
 
 ---
 
-**Topic: `Demo-Session-LongRunning`** *(session-enabled)*  
+**Topic: `Demo-Session-LongRunning`** _(session-enabled)_  
 Koordinerar asynkrona, långvariga operationer via Service Bus-sessioner. SessionId = `customerId`.
 
 | Subscription | SQL-filter | Konsument |
@@ -954,7 +957,7 @@ Koordinerar asynkrona, långvariga operationer via Service Bus-sessioner. Sessio
 
 ---
 
-**Topic: `Demo-Session-Convoy`** *(session-enabled)*  
+**Topic: `Demo-Session-Convoy`** _(session-enabled)_  
 Samlar flera relaterade meddelanden (order-rader) för en och samma transaktion via sessionsmönstret. SessionId = `Session-{customerId}`.
 
 | Subscription | SQL-filter | Konsument |
@@ -1141,6 +1144,7 @@ DeleteApplicationLogRetention (dagligen kl 01:00)
 ### 24.3 Konfigurationsdriven design
 
 AppEvent-motorn är generisk – varje källsystem registreras i databasen (`ApplicationObject`-tabellen) med:
+
 - REST-fråge-URL med `<LastChangedTime>`-placeholder
 - Mappnings-funktion (InvokeFunction i Logic App)
 - Prenumerationsfilter (ObjectType + SendingSystem)
@@ -1389,6 +1393,7 @@ RemoveDeferredMessages (HTTP-triggrad, via APIM Common-Logic)
 ### 26.2 Varför Deferred Messages?
 
 Mönstret löser batch-tratttproblemet: ett system kan skicka 1000-tals meddelanden i ett svep utan att de bearbetas okontrollerat. Mottagaren:
+
 1. Tar emot alla meddelanden snabbt
 2. Deferrar dem (de kvarstår i kön utan att konkurrera om processeringstid)
 3. Väljer när och hur de bearbetas
@@ -1885,6 +1890,7 @@ Tool-GetHRDemoEmployees (INT-Demo-Logic, HTTP-triggrad)
 ### 31.3 MCP-arkitektur
 
 MCP-exponeringen via Logic Apps gör det möjligt att:
+
 - Alla befintliga Logic App-HTTP-endpoints kan bli AI-verktyg utan kodändring
 - APIM genomför auth, rate-limiting och versionshantering
 - Workflow-historiken i Logic Apps ger spårbarhet för alla AI-anrop
@@ -1918,7 +1924,3 @@ Modulerna måste deployas i följande ordning för att beroenden ska vara uppfyl
 ```
 
 ---
-
-
-
-

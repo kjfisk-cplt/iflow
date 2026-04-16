@@ -229,8 +229,8 @@ graph TB
 - Private Link Scope för säker åtkomst inom VNet
 ```
 
-4. Create Mermaid diagram with Swedish labels
-5. Link diagram to documentation
+1. Create Mermaid diagram with Swedish labels
+2. Link diagram to documentation
 
 ## Quality Checklist
 

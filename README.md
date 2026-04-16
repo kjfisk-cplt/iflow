@@ -43,9 +43,9 @@ IFlow follows a **modular domain-based architecture** where each integration dom
 |--------|---------|--------|
 | `int_network` | VNet, NSG, 15 Private DNS zones, Private Link Scope | ✅ Implemented |
 | `int_monitoring` | Log Analytics, Application Insights, Action Groups | ✅ Implemented |
-| `int_common` | Shared Managed Identity, App Service Plans | 📋 Planned |
+| `int_common` | Shared Managed Identity, App Service Plans | ✅ Implemented |
 | `int_keyvault` | Centralized secrets with Private Endpoints | 📋 Planned |
-| `int_messaging` | Event Hub, Service Bus for event-driven flows | 📋 Planned |
+| `int_messaging` | Event Hub, Service Bus for event-driven flows | ✅ Implemented |
 | `int_storage` | Blob, Queue, Table storage | 📋 Planned |
 | `int_database` | Azure SQL | 📋 Planned |
 | `int_apim` | API Management as integration gateway | 📋 Planned |
@@ -126,14 +126,19 @@ iflow/
 
 1. **Azure Subscription** with Contributor access
 2. **Azure CLI** >= 2.50.0
+
    ```powershell
    winget install Microsoft.AzureCLI
    ```
+
 3. **Terraform** >= 1.9
+
    ```powershell
    winget install Hashicorp.Terraform
    ```
+
 4. **PowerShell** >= 7.0
+
    ```powershell
    winget install Microsoft.PowerShell
    ```
@@ -212,6 +217,21 @@ terraform plan -var-file="terraform.tfvars"
 terraform apply -var-file="terraform.tfvars"
 ```
 
+#### 5. Deploy Messaging Module
+
+```powershell
+cd ../int_messaging
+
+# Copy terraform.tfvars.example to terraform.tfvars and configure your values
+
+terraform init `
+  -backend-config="../backend.conf" `
+  -backend-config="key=int_messaging.tfstate"
+
+terraform plan -var-file="terraform.tfvars"
+terraform apply -var-file="terraform.tfvars"
+```
+
 ### Environment Configuration
 
 Each environment requires a `terraform.tfvars` file (git-ignored) with:
@@ -230,28 +250,32 @@ location        = "swedencentral"
 ### Terraform Workflow
 
 1. **Navigate to module stack**
-   ```bash
+
+    ```powershell
    cd infrastructure_as_code/environments/{env}/int_{domain}
    ```
 
 2. **Initialize Terraform**
-   ```bash
+
+    ```powershell
    terraform init -backend-config="../backend.conf" -backend-config="key=int_{domain}.tfstate"
    ```
 
 3. **Plan changes**
-   ```bash
+
+    ```powershell
    terraform plan -var-file="terraform.tfvars"
    ```
 
 4. **Apply changes** (after review)
-   ```bash
+
+    ```powershell
    terraform apply -var-file="terraform.tfvars"
    ```
 
 ### Code Quality Checks
 
-```bash
+```powershell
 # Format Terraform code
 terraform fmt -check -recursive
 
@@ -267,11 +291,13 @@ tfsec infrastructure_as_code/
 All Azure resources follow **Azure Cloud Adoption Framework (CAF)** naming conventions:
 
 **Platform resources** (Network, Monitoring, Common):
+
 - Resource groups: `rg-{workload}-{purpose}-{env}`
 - VNets: `vnet-{workload}-integration-{env}`
 - Storage: `sto{purpose}{workload}{env}`
 
 **Domain resources** (HR, Finance, SAP):
+
 - Resource groups: `rg-{workload}-{domain}-{env}`
 - Logic Apps: `logic-{workload}-{domain}-{env}`
 - Functions: `func-{workload}-{domain}-{purpose}-{env}`
@@ -336,7 +362,7 @@ terraform {
 
 ### Infrastructure Validation
 
-```bash
+```powershell
 # Format check
 terraform fmt -check -recursive
 
@@ -351,7 +377,7 @@ tfsec infrastructure_as_code/
 
 Always review `terraform plan` output before applying changes:
 
-```bash
+```powershell
 terraform plan -var-file="terraform.tfvars" -out=tfplan
 # Review output carefully
 terraform apply tfplan
@@ -372,6 +398,7 @@ terraform apply tfplan
 ### GitHub Copilot Instructions
 
 Domain-specific guidance for AI assistants:
+
 - **[.github/instructions/terraform.instructions.md](.github/instructions/terraform.instructions.md)** - Terraform best practices
 - **[.github/instructions/terraform-azure.instructions.md](.github/instructions/terraform-azure.instructions.md)** - Azure-specific patterns
 - **[.github/instructions/azure-verified-modules-terraform.instructions.md](.github/instructions/azure-verified-modules-terraform.instructions.md)** - AVM usage guidelines
@@ -426,18 +453,21 @@ When making changes, check if these documents need updates:
 ## 🗺️ Roadmap
 
 ### Phase 1: Foundation (Current)
+
 - ✅ Network infrastructure (VNet, subnets, DNS zones)
 - ✅ Monitoring platform (Log Analytics, Application Insights)
 - 📋 Common platform services (Managed Identity, App Service Plans)
 - 📋 Key Vault with private endpoints
 
 ### Phase 2: Platform Services
-- 📋 Messaging infrastructure (Service Bus, Event Hub)
+
+- ✅ Messaging infrastructure (Service Bus, Event Hub)
 - 📋 Storage services (Blob, Queue, Table)
 - 📋 Database services (Azure SQL)
 - 📋 API Management gateway
 
 ### Phase 3: Integration Domains
+
 - 📋 Logic Apps Standard for workflow orchestration
 - 📋 Azure Functions (.NET) for processing
 - 📋 Domain-specific integration flows

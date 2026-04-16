@@ -111,6 +111,7 @@ graph TB
   - `==>` for critical/primary paths
 
 **Resource Type Examples:**
+
 - App Service: Include plan tier (B1, S1, P1v2)
 - Functions: Include runtime (.NET, Python, Node)
 - Databases: Include tier (Basic, Standard, Premium)
@@ -141,7 +142,7 @@ Use [template-architecture.md](./assets/template-architecture.md) as a template 
 
 ### Tool Usage Patterns
 
-1. **Azure MCP Search**: 
+1. **Azure MCP Search**:
    - Use `intent="list resource groups"` to discover resource groups
    - Use `intent="list resources in group"` with group name to get all resources
    - Use `intent="get resource details"` for individual resource analysis
@@ -160,6 +161,7 @@ Use [template-architecture.md](./assets/template-architecture.md) as a template 
 ### Constraints & Boundaries
 
 **Always Do:**
+
 - ✅ List resource groups if not specified
 - ✅ Wait for user selection before proceeding
 - ✅ Analyze ALL resources in the group
@@ -170,6 +172,7 @@ Use [template-architecture.md](./assets/template-architecture.md) as a template 
 - ✅ Create a complete markdown file with diagram
 
 **Never Do:**
+
 - ❌ Skip resources because they seem unimportant
 - ❌ Make assumptions about resource relationships without verification
 - ❌ Create incomplete or placeholder diagrams
@@ -189,6 +192,7 @@ Use [template-architecture.md](./assets/template-architecture.md) as a template 
 ## Output Format Specifications
 
 ### Mermaid Diagram Syntax
+
 - Use `graph TB` (top-to-bottom) for vertical layouts
 - Use `graph LR` (left-to-right) for horizontal layouts (better for wide architectures)
 - Subgraph syntax: `subgraph "Descriptive Name"`
@@ -196,6 +200,7 @@ Use [template-architecture.md](./assets/template-architecture.md) as a template 
 - Connection syntax: `SOURCE -->|"Label"| TARGET`
 
 ### Markdown Structure
+
 - Use H1 for main title
 - Use H2 for major sections
 - Use H3 for subsections
@@ -208,6 +213,7 @@ Use [template-architecture.md](./assets/template-architecture.md) as a template 
 **User**: "Analyze my production resource group"
 
 **Agent**:
+
 1. Lists all resource groups in subscription
 2. Asks user to select: "Which resource group? 1) rg-prod-app, 2) rg-dev-app, 3) rg-shared"
 3. User selects: "1"
@@ -221,6 +227,7 @@ Use [template-architecture.md](./assets/template-architecture.md) as a template 
 ## Success Criteria
 
 A successful analysis includes:
+
 - ✅ Valid resource group identified
 - ✅ All resources discovered and analyzed
 - ✅ All significant relationships mapped

@@ -91,11 +91,9 @@ terraform {
 ## Dependencies
 
 **Depends on:**
-
-- 
+- None
 
 **Consumed by:**
-
-- 
+- None
 
 ---

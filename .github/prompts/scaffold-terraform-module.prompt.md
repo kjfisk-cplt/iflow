@@ -351,7 +351,8 @@ After creating the module structure:
      -backend-config="key=int_{{module_name}}.tfstate"
 ````
 
-7. **Validate**:
+1. **Validate**:
+
    ```bash
    terraform fmt
    terraform validate
@@ -433,7 +434,7 @@ Created in: `infrastructure_as_code/environments/{{environment}}/int_{{module_na
    terraform validate
 ````
 
-5. **Deploy**:
+1. **Deploy**:
    - Use `/terraform-deployer` for safe deployment workflow
 
 Would you like me to help implement the main resources for this module?

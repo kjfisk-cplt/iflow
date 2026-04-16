@@ -35,6 +35,7 @@ Analyze current repository context and suggest relevant Agent Skills from the [G
 ## Context Analysis Criteria
 
 🔍 **Repository Patterns**:
+
 - Programming languages used (.cs, .js, .py, .ts, etc.)
 - Framework indicators (ASP.NET, React, Azure, Next.js, etc.)
 - Project types (web apps, APIs, libraries, tools, infrastructure)
@@ -42,6 +43,7 @@ Analyze current repository context and suggest relevant Agent Skills from the [G
 - Infrastructure and cloud providers (Azure, AWS, GCP)
 
 🗨️ **Chat History Context**:
+
 - Recent discussions and pain points
 - Feature requests or implementation needs
 - Code review patterns
@@ -82,6 +84,7 @@ Display analysis results in structured table comparing awesome-copilot skills wi
 ## Skill Structure Requirements
 
 Based on the Agent Skills specification, each skill is a folder containing:
+
 - **`SKILL.md`**: Main instruction file with front matter (`name`, `description`) and detailed instructions
 - **Optional bundled assets**: Scripts, templates, reference data, and other files referenced from `SKILL.md`
 - **Folder naming**: Lowercase with hyphens (e.g., `azure-deployment-preflight`)
@@ -90,6 +93,7 @@ Based on the Agent Skills specification, each skill is a folder containing:
 ## Front Matter Structure
 
 Skills in awesome-copilot use this front matter format in `SKILL.md`:
+
 ```markdown
 ---
 name: 'skill-name'
@@ -122,6 +126,7 @@ description: 'Brief description of what this skill provides and when to use it'
 ## Update Handling
 
 When outdated skills are identified:
+
 1. Include them in the output table with ⚠️ status
 2. Document specific differences in the "Suggestion Rationale" column
 3. Provide recommendation to update with key changes noted

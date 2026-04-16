@@ -122,6 +122,7 @@ class CodeReflector:
 ## Evaluation Strategies
 
 ### Outcome-Based
+
 Evaluate whether output achieves the expected result.
 
 ```python
@@ -130,6 +131,7 @@ def evaluate_outcome(task: str, output: str, expected: str) -> str:
 ```
 
 ### LLM-as-Judge
+
 Use LLM to compare and rank outputs.
 
 ```python
@@ -138,6 +140,7 @@ def llm_judge(output_a: str, output_b: str, criteria: str) -> str:
 ```
 
 ### Rubric-Based
+
 Score outputs against weighted dimensions.
 
 ```python
