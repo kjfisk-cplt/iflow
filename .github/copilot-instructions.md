@@ -67,7 +67,14 @@ infrastructure_as_code/environments/{env}/int_{domain}/
 rg-{workload}-{purpose}-{env}           # rg-iflow-network-dev
 vnet-{workload}-integration-{env}       # vnet-iflow-integration-dev
 sto{purpose}{workload}{env}             # stomaboringiflowdev
+kv-{workload}-{env}-{suffix}            # kv-iflow-dev-a1b2 (4-char random suffix for global uniqueness)
 ```
+
+**Note on Globally Unique Resources:**
+- Key Vault names include a 4-character random suffix to ensure global uniqueness
+- The suffix is deterministic based on workload and environment (using `random_string` with keepers)
+- Same workload+environment combination always produces the same suffix
+- This ensures reproducible deployments while avoiding name conflicts
 
 **Domain naming** (`_shared/naming-domain`):
 

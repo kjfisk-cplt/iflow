@@ -103,10 +103,12 @@ output "pep_monitoring_name" {
 }
 
 # ─── Key Vault ────────────────────────────────────────────────────────────────
+# Key Vault names must be globally unique. A 4-character random suffix is appended
+# to ensure uniqueness while maintaining readability and consistency.
 
 output "kv_name" {
-  description = "Key Vault name."
-  value       = "kv-${var.workload}-${var.env}"
+  description = "Key Vault name with unique suffix for global uniqueness."
+  value       = "kv-${var.workload}-${var.env}-${random_string.unique_suffix.result}"
 }
 
 output "pep_kv_name" {
