@@ -30,6 +30,10 @@ variable "eventhub_namespace_sku" {
   description = "SKU for the Event Hub namespace."
   type        = string
   default     = "Standard"
+  validation {
+    condition     = var.eventhub_namespace_sku == "Standard"
+    error_message = "eventhub_namespace_sku must be Standard for this stack."
+  }
 }
 
 variable "eventhub_namespace_capacity" {
@@ -66,6 +70,10 @@ variable "servicebus_sku" {
   description = "SKU for Service Bus namespaces."
   type        = string
   default     = "Standard"
+  validation {
+    condition     = var.servicebus_sku == "Standard"
+    error_message = "servicebus_sku must be Standard for this stack."
+  }
 }
 
 variable "logging_queues" {

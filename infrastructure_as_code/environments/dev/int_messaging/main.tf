@@ -77,7 +77,7 @@ resource "azurerm_servicebus_namespace" "logging" {
   tags                = local.tags
 
   minimum_tls_version           = "1.2"
-  public_network_access_enabled = false
+  public_network_access_enabled = true
   local_auth_enabled            = false
 }
 
@@ -89,7 +89,7 @@ resource "azurerm_servicebus_namespace" "messagebroker" {
   tags                = local.tags
 
   minimum_tls_version           = "1.2"
-  public_network_access_enabled = false
+  public_network_access_enabled = true
   local_auth_enabled            = false
 }
 
