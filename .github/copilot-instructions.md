@@ -64,14 +64,17 @@ infrastructure_as_code/environments/{env}/int_{domain}/
 **Platform naming** (`_shared/naming`):
 
 ```
-rg-{workload}-{purpose}-{env}           # rg-iflow-network-dev
-vnet-{workload}-integration-{env}       # vnet-iflow-integration-dev
-sto{purpose}{workload}{env}             # stomaboringiflowdev
-kv-{workload}-{env}-{suffix}            # kv-iflow-dev-a1b2 (4-char random suffix for global uniqueness)
+rg-{workload}-{purpose}-{env}                      # rg-iflow-network-dev
+vnet-{workload}-integration-{env}                  # vnet-iflow-integration-dev
+sto{purpose}{workload}{env}                        # stomaboringiflowdev
+kv-{workload}-{env}-{suffix}                       # kv-iflow-dev-a1b2 (4-char random suffix for global uniqueness)
+evh-{workload}-{purpose}-{env}-{suffix}            # evh-iflow-messaging-dev-a1b2 (4-char random suffix for global uniqueness)
+sb-{workload}-{purpose}-{env}-{suffix}             # sb-iflow-logging-dev-a1b2 (4-char random suffix for global uniqueness)
 ```
 
 **Note on Globally Unique Resources:**
-- Key Vault names include a 4-character random suffix to ensure global uniqueness
+- **Key Vault**, **Event Hub namespaces**, and **Service Bus namespaces** require globally unique names across all of Azure
+- These resources include a 4-character random suffix to ensure global uniqueness (e.g., `kv-iflow-dev-a1b2`, `evh-iflow-messaging-dev-a1b2`, `sb-iflow-logging-dev-a1b2`)
 - The suffix is deterministic based on workload and environment (using `random_string` with keepers)
 - Same workload+environment combination always produces the same suffix
 - This ensures reproducible deployments while avoiding name conflicts
