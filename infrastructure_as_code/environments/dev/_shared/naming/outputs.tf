@@ -159,20 +159,22 @@ output "sto_vw" {
 }
 
 # ─── Messaging ────────────────────────────────────────────────────────────────
+# Event Hub and Service Bus namespaces require globally unique names across Azure.
+# A 4-character random suffix is appended to ensure uniqueness.
 
 output "evh_messaging_name" {
-  description = "Event Hub namespace name."
-  value       = "evh-${var.workload}-messaging-${var.env}"
+  description = "Event Hub namespace name with unique suffix for global uniqueness."
+  value       = "evh-${var.workload}-messaging-${var.env}-${random_string.unique_suffix.result}"
 }
 
 output "sb_logging_name" {
-  description = "Service Bus namespace name for logging."
-  value       = "sb-${var.workload}-logging-${var.env}"
+  description = "Service Bus namespace name for logging with unique suffix for global uniqueness."
+  value       = "sb-${var.workload}-logging-${var.env}-${random_string.unique_suffix.result}"
 }
 
 output "sb_messagebroker_name" {
-  description = "Service Bus namespace name for message brokering."
-  value       = "sb-${var.workload}-messagebroker-${var.env}"
+  description = "Service Bus namespace name for message brokering with unique suffix for global uniqueness."
+  value       = "sb-${var.workload}-messagebroker-${var.env}-${random_string.unique_suffix.result}"
 }
 
 # ─── App Service Plans ────────────────────────────────────────────────────────

@@ -66,8 +66,13 @@ resource "azurerm_resource_group" "example" {
 - VNets: `vnet-{workload}-integration-{env}`
 - Storage: `sto{purpose}{workload}{env}` (no hyphens, lowercase)
 - Private endpoints: `pep-{service}-{workload}-{env}`
+- Event Hub namespaces: `evh-{workload}-{purpose}-{env}-{suffix}` (4-char random suffix for global uniqueness)
+- Service Bus namespaces: `sb-{workload}-{purpose}-{env}-{suffix}` (4-char random suffix for global uniqueness)
+- Key Vault: `kv-{workload}-{env}-{suffix}` (4-char random suffix for global uniqueness)
 
 **Storage account naming**: Must be 3-24 lowercase alphanumeric characters, no hyphens. The naming module handles this automatically.
+
+**Globally unique resources**: Event Hub namespaces, Service Bus namespaces, and Key Vault names include a 4-character random suffix to ensure global uniqueness across all of Azure. The suffix is deterministic based on workload and environment.
 
 ## Azure Verified Modules (AVM)
 
